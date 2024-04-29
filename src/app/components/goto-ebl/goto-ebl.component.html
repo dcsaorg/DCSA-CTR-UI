@@ -1,0 +1,28 @@
+<ng-container *ngIf="true">
+  <form #ctrForm="ngForm">
+    <div class="row">
+      <label for="eblID">Go to EBL: </label>
+      <input id="eblID"
+             name="eblID"
+             pInputText
+             pattern="^[0-9a-f]+$"
+             minlength="64"
+             maxlength="64"
+             [required]="true"
+             [(ngModel)]="eblID"
+             type="text">
+    </div>
+
+    <div class="row">
+      <button pButton
+              [disabled]="submissionInProgress || !ctrForm.valid || (ctrForm.pristine ?? false)"
+              [routerLink]="['records', eblID]"
+              icon="pi pi-arrow-circle-right"
+              label="Go"
+              iconPos="left">
+      </button>
+      <p-progressSpinner *ngIf="submissionInProgress">
+      </p-progressSpinner>
+    </div>
+  </form>
+</ng-container>

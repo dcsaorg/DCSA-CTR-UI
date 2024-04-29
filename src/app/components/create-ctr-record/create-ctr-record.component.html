@@ -1,0 +1,148 @@
+<ng-container *ngIf="true">
+  <form #ctrForm="ngForm">
+    <div class="row">
+      <label for="eblID">EBL ID: </label>
+      <input id="eblID"
+             name="eblID"
+             pInputText
+             pattern="^[0-9a-f]+$"
+             minlength="64"
+             maxlength="64"
+             [disabled]="!isCreateMode || eblIDFrozen"
+             [required]="true"
+             [(ngModel)]="_eblID"
+             type="text">
+    </div>
+
+    <div class="row">
+      <label for="action">Action: </label>
+      <p-dropdown [required]="true"
+                  [(ngModel)]="action"
+                  id="action"
+                  name="action"
+                  [showClear]="true"
+                  [options]="allActions">
+      </p-dropdown>
+    </div>
+
+    <div class="row">
+      <label for="actor">Actor: </label>
+      <p-dropdown [required]="true"
+                  [(ngModel)]="actor"
+                  id="actor"
+                  name="actor"
+                  [filter]="true"
+                  [showClear]="true"
+                  [options]="config.platforms">
+      </p-dropdown>
+    </div>
+
+    <div class="row">
+      <label for="receiver">Receiver: </label>
+      <p-dropdown [(ngModel)]="receiver"
+                  id="receiver"
+                  name="receiver"
+                  [filter]="true"
+                  [showClear]="true"
+                  [options]="config.platforms">
+      </p-dropdown>
+    </div>
+
+    <div class="row">
+      <label for="platformActionTimestamp">Platform Action Timestamp: </label>
+      <p-calendar [(ngModel)]="platformActionTimestamp"
+                  id="platformActionTimestamp"
+                  name="platformActionTimestamp"
+                  [showTime]="true">
+      </p-calendar>
+    </div>
+
+    <div class="row">
+      <label for="lastEnvelopeTransferChainEntrySignedContentChecksum">Last Envelope Transfer Chain Entry Signed Content Checksum: </label>
+      <input id="lastEnvelopeTransferChainEntrySignedContentChecksum"
+             name="lastEnvelopeTransferChainEntrySignedContentChecksum"
+             pInputText
+             pattern="^[0-9a-f]+$"
+             minlength="64"
+             maxlength="64"
+             [(ngModel)]="lastEnvelopeTransferChainEntrySignedContentChecksum"
+             type="text">
+    </div>
+
+    <div class="row">
+      <label for="inResponseToRecord">In Response To Record: </label>
+      <input id="inResponseToRecord"
+             name="inResponseToRecord"
+             pInputText
+             pattern="^[0-9a-f]+$"
+             minlength="64"
+             maxlength="64"
+             [disabled]="isCreateMode"
+             [(ngModel)]="inResponseToRecord"
+             type="text">
+    </div>
+
+    <div class="row">
+      <label for="canonicalRecord">Canonical Record: </label>
+      <input id="canonicalRecord"
+             name="canonicalRecord"
+             pInputText
+             pattern="^[0-9a-f]+$"
+             minlength="64"
+             maxlength="64"
+             [disabled]="isCreateMode"
+             [(ngModel)]="canonicalRecord"
+             type="text">
+    </div>
+
+    <div class="row">
+      <label for="previousRecord">Previous Record: </label>
+      <input id="previousRecord"
+             name="previousRecord"
+             pInputText
+             pattern="^[0-9a-f]+$"
+             minlength="64"
+             maxlength="64"
+             [disabled]="isCreateMode"
+             [required]="!isCreateMode"
+             [(ngModel)]="previousRecord"
+             type="text">
+    </div>
+
+    <div class="row">
+      <button appDebounceClick
+              pButton
+              (debounceClick)="submit()"
+              [debounceTime]="200"
+              [disabled]="submissionInProgress || !ctrForm.valid || !isContentValid || (ctrForm.pristine ?? false)"
+              icon="pi pi-save"
+              label="{{isCreateMode ? 'Create first record' : 'Append record'}}"
+              iconPos="left">
+      </button>
+      <button label="Cancel {{isCreateMode ? 'first record' : 'append record'}}"
+              pButton
+              appDebounceClick
+              [disabled]="submissionInProgress"
+              (debounceClick)="cancel()"
+              icon="pi pi-trash"
+              class="p-button-secondary">
+      </button>
+      <p-progressSpinner *ngIf="submissionInProgress">
+      </p-progressSpinner>
+    </div>
+    <h3>Input/validation debugging</h3>
+    <div>
+      <h4 *ngIf="ctrForm.valid">Platform Record (unsigned format)</h4>
+      <h4 *ngIf="!ctrForm.valid">Platform Record (unsigned format) [INVALID]</h4>
+      <pre>{{record | json}}</pre>
+      <h4>Raw form value (not a valid record)</h4>
+      <pre>{{ctrForm.value | json}}</pre>
+    </div>
+  </form>
+</ng-container>
+
+<p-toast key="GenericSuccessToast" position="bottom-right"></p-toast>
+<p-toast key="GenericErrorToast" position="bottom-right"></p-toast>
+
+<p-confirmDialog [transitionOptions]="'0ms'">
+</p-confirmDialog>

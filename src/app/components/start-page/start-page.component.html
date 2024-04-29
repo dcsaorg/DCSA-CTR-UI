@@ -1,0 +1,10 @@
+<h1>CTR UI prototype</h1>
+
+<p>This is a small UI to prototype the CTR functionality</p>
+
+<h2>Look up an eBL</h2>
+<p>Have an eBL ID that you think is in the CTR? Put it here and hit go!</p>
+<app-goto-ebl></app-goto-ebl>
+
+<h2>Add the first record for a new eBL</h2>
+<app-create-ctr-record (created)="onCreated($event)"></app-create-ctr-record>
