@@ -35,6 +35,7 @@ export class CtrService {
       return throwError(() => e);
     }
     const existingRecords = this.state.get(eblID);
+    let recordNumber = 1;
     if (!existingRecords) {
       if (record.previousRecord) {
         return throwError(() => Error("Conflict: Bad previous previousRecord"));
@@ -43,6 +44,8 @@ export class CtrService {
       return throwError(() => Error("Conflict: Bad previous previousRecord"));
     } else if (existingRecords[existingRecords.length - 1].recordID !== record.previousRecord) {
       return throwError(() => Error("Conflict: Bad previous previousRecord"));
+    } else {
+      recordNumber = existingRecords[existingRecords.length - 1].recordNumber + 1;
     }
     const sha256HashFunc = shajs('sha256');
     // TODO: Create a proper signed record and checksum it, so the record ID is correct.
@@ -50,6 +53,7 @@ export class CtrService {
     const recordID = sha256HashFunc.update(uuidv4()).digest('hex');
     let parsedCTRRecord: ParsedCTRRecord = {
       recordID: recordID,
+      recordNumber,
       insertedAtTimestamp: new Date(),
       insertedBy: record.actor,
       parsedPlatformRecord: {

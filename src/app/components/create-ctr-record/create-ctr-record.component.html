@@ -20,6 +20,7 @@
                   [(ngModel)]="action"
                   id="action"
                   name="action"
+                  [filter]="true"
                   [showClear]="true"
                   [options]="allActions">
       </p-dropdown>
@@ -71,42 +72,63 @@
 
     <div class="row">
       <label for="inResponseToRecord">In Response To Record: </label>
-      <input id="inResponseToRecord"
-             name="inResponseToRecord"
-             pInputText
-             pattern="^[0-9a-f]+$"
-             minlength="64"
-             maxlength="64"
-             [disabled]="isCreateMode"
-             [(ngModel)]="inResponseToRecord"
-             type="text">
+      <p-dropdown [(ngModel)]="inResponseToRecord"
+                  id="inResponseToRecord"
+                  name="inResponseToRecord"
+                  [options]="ctrRecords"
+                  [filter]="true"
+                  [showClear]="true"
+                  [disabled]="isCreateMode"
+                  optionValue="recordID"
+                  filterBy="parsedPlatformRecord.recordNumber,parsedPlatformRecord.action,parsedPlatformRecord.actor,recordID">
+        <ng-template let-record pTemplate="item">
+          <abbr title="{{record.recordID}}">[{{record.recordNumber}}]: {{record.parsedPlatformRecord.actor}} {{record.parsedPlatformRecord.action}}<ng-container *ngIf="record.parsedPlatformRecord.receiver as receiver"> {{receiver}}</ng-container></abbr>
+        </ng-template>
+        <ng-template let-record pTemplate="selectedItem">
+          <abbr title="{{record.recordID}}">[{{record.recordNumber}}]: {{record.parsedPlatformRecord.actor}} {{record.parsedPlatformRecord.action}}<ng-container *ngIf="record.parsedPlatformRecord.receiver as receiver"> {{receiver}}</ng-container></abbr>
+        </ng-template>
+      </p-dropdown>
     </div>
 
     <div class="row">
       <label for="canonicalRecord">Canonical Record: </label>
-      <input id="canonicalRecord"
-             name="canonicalRecord"
-             pInputText
-             pattern="^[0-9a-f]+$"
-             minlength="64"
-             maxlength="64"
-             [disabled]="isCreateMode"
-             [(ngModel)]="canonicalRecord"
-             type="text">
+      <p-dropdown [(ngModel)]="canonicalRecord"
+                  id="canonicalRecord"
+                  name="canonicalRecord"
+                  [options]="ctrRecords"
+                  [filter]="true"
+                  [showClear]="true"
+                  [disabled]="isCreateMode"
+                  optionValue="recordID"
+                  filterBy="parsedPlatformRecord.recordNumber,parsedPlatformRecord.action,parsedPlatformRecord.actor,recordID">
+        <ng-template let-record pTemplate="item">
+          <abbr title="{{record.recordID}}">[{{record.recordNumber}}]: {{record.parsedPlatformRecord.actor}} {{record.parsedPlatformRecord.action}}<ng-container *ngIf="record.parsedPlatformRecord.receiver as receiver"> {{receiver}}</ng-container></abbr>
+        </ng-template>
+        <ng-template let-record pTemplate="selectedItem">
+          <abbr title="{{record.recordID}}">[{{record.recordNumber}}]: {{record.parsedPlatformRecord.actor}} {{record.parsedPlatformRecord.action}}<ng-container *ngIf="record.parsedPlatformRecord.receiver as receiver"> {{receiver}}</ng-container></abbr>
+        </ng-template>
+      </p-dropdown>
     </div>
 
     <div class="row">
       <label for="previousRecord">Previous Record: </label>
-      <input id="previousRecord"
-             name="previousRecord"
-             pInputText
-             pattern="^[0-9a-f]+$"
-             minlength="64"
-             maxlength="64"
-             [disabled]="isCreateMode"
-             [required]="!isCreateMode"
-             [(ngModel)]="previousRecord"
-             type="text">
+      <p-dropdown [(ngModel)]="previousRecord"
+                  id="previousRecord"
+                  name="previousRecord"
+                  [options]="ctrRecords"
+                  [filter]="true"
+                  [showClear]="true"
+                  [required]="!isCreateMode"
+                  [disabled]="isCreateMode"
+                  optionValue="recordID"
+                  filterBy="parsedPlatformRecord.recordNumber,parsedPlatformRecord.action,parsedPlatformRecord.actor,recordID">
+        <ng-template let-record pTemplate="item">
+          <abbr title="{{record.recordID}}">[{{record.recordNumber}}]: {{record.parsedPlatformRecord.actor}} {{record.parsedPlatformRecord.action}}<ng-container *ngIf="record.parsedPlatformRecord.receiver as receiver"> {{receiver}}</ng-container></abbr>
+        </ng-template>
+        <ng-template let-record pTemplate="selectedItem">
+          <abbr title="{{record.recordID}}">[{{record.recordNumber}}]: {{record.parsedPlatformRecord.actor}} {{record.parsedPlatformRecord.action}}<ng-container *ngIf="record.parsedPlatformRecord.receiver as receiver"> {{receiver}}</ng-container></abbr>
+        </ng-template>
+      </p-dropdown>
     </div>
 
     <div class="row">

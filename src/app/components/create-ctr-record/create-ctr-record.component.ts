@@ -32,7 +32,7 @@ import {CalendarModule} from 'primeng/calendar';
     ProgressSpinnerModule,
     DebounceClickDirective,
     JsonPipe,
-    CalendarModule
+    CalendarModule,
   ]
 })
 export class CreateCtrRecordComponent implements OnInit, OnChanges {
@@ -49,6 +49,9 @@ export class CreateCtrRecordComponent implements OnInit, OnChanges {
   inResponseToRecord?: string;
   @Input()
   previousRecord?: string;
+
+  @Input()
+  ctrRecords?: ParsedCTRRecord[];
 
   eblIDFrozen: boolean = false;
 

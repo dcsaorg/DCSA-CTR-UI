@@ -36,10 +36,39 @@
   </ng-template>
   <ng-template pTemplate="body" let-row let-columnsUntyped="columns">
     <tr *ngIf="asColumns(columnsUntyped) as columns">
-      <td *ngFor="let col of columns">{{col.value(row)}}</td>
+      <ng-container *ngFor="let col of columns" [ngSwitch]="col.contentType">
+        <ng-container *ngSwitchCase="'platformRecordID'">
+          <td>
+            <ng-container *ngIf="col.value(row) as recordID; else renderOmitted">
+              <ng-container *ngIf="ctrRecordTable$ | async as ctrRecordTable; else renderRecordIDFallback">
+                <ng-container *ngIf="ctrRecordTable.get(recordID) as matchedRecord; else renderRecordIDFallback">
+                  {{matchedRecord.recordNumber}} (<abbr title="{{recordID}}">{{recordID | slice:0:7}})</abbr>
+                </ng-container>
+              </ng-container>
+              <ng-template #renderRecordIDFallback>
+                <abbr title="{{recordID}}">{{recordID | slice:0:7}}</abbr>
+              </ng-template>
+            </ng-container>
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchCase="'checksum'">
+          <td>
+            <ng-container *ngIf="col.value(row) as checksum; else renderOmitted">
+              <abbr title="{{checksum}}">{{checksum | slice:0:7}}</abbr>
+            </ng-container>
+          </td>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          <td>{{col.value(row)}}</td>
+        </ng-container>
+      </ng-container>
     </tr>
   </ng-template>
 </p-table>
+
+<ng-template #renderOmitted>
+  (Omitted)
+</ng-template>
 
 <ng-container *ngIf="ctrRecords$ | async as ctrRecords">
   <ng-container *ngIf="ctrRecords && ctrRecords.length > 0">
@@ -47,6 +76,7 @@
       <h2>Append record</h2>
       <app-create-ctr-record [eblID]="lastRecord.parsedPlatformRecord.eblID"
                              [previousRecord]="lastRecord.recordID"
+                             [ctrRecords]="ctrRecords"
                              (created)="refresh()">
       </app-create-ctr-record>
     </ng-container>

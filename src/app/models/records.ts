@@ -52,6 +52,7 @@ export interface ParsedPlatformRecord {
 
 export interface ParsedCTRRecord {
   readonly recordID: string;
+  readonly recordNumber: number;
   readonly insertedBy: string;
   readonly insertedAtTimestamp: Date;
   readonly parsedPlatformRecord: ParsedPlatformRecord;

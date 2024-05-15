@@ -7,12 +7,12 @@ import {TagModule} from 'primeng/tag';
 import {InputTextModule} from 'primeng/inputtext';
 import {ToastModule} from 'primeng/toast';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {AsyncPipe, JsonPipe, NgForOf, NgIf} from '@angular/common';
+import {AsyncPipe, JsonPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, SlicePipe} from '@angular/common';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DebounceClickDirective} from '../../directives/debounce-click.directive';
 import {CalendarModule} from 'primeng/calendar';
-import {BehaviorSubject, combineLatest, Observable, shareReplay, switchMap, tap, zip} from 'rxjs';
-import {isValidEBLID, ParsedCTRRecord} from '../../models/records';
+import {BehaviorSubject, combineLatest, map, Observable, shareReplay, switchMap, tap, zip} from 'rxjs';
+import {CTRRecord, isValidEBLID, ParsedCTRRecord} from '../../models/records';
 import {CreateCtrRecordComponent} from '../create-ctr-record/create-ctr-record.component';
 import {TableModule} from 'primeng/table';
 import {Column} from '../../models/table-models';
@@ -37,7 +37,11 @@ import {Column} from '../../models/table-models';
     AsyncPipe,
     NgForOf,
     CreateCtrRecordComponent,
-    TableModule
+    TableModule,
+    NgSwitch,
+    NgSwitchDefault,
+    NgSwitchCase,
+    SlicePipe
   ]
 })
 export class RenderCtrRecordsComponent implements OnInit, OnChanges {
@@ -45,52 +49,64 @@ export class RenderCtrRecordsComponent implements OnInit, OnChanges {
   @Input()
   eblID$?: Observable<string>;
   ctrRecords$?: Observable<ParsedCTRRecord[]>;
+  ctrRecordTable$?: Observable<Map<string, ParsedCTRRecord>>;
   ctrLoadingError: boolean = false;
   refresh$ = new BehaviorSubject<number>(0);
 
   columns: Column<ParsedCTRRecord>[] = [
     {
       title: "Record ID",
+      contentType: "platformRecordID",
       value: (r) => r.recordID,
     },
     {
       title: "Actor",
+      contentType: "string",
       value: (r) => r.parsedPlatformRecord.actor,
     },
     {
       title: "Action",
+      contentType: "string",
       value: (r) => r.parsedPlatformRecord.action,
     },
     {
       title: "Receiver",
+      contentType: "string",
       value: (r) => r.parsedPlatformRecord.receiver ?? '(No receiver provided)',
     },
     {
       title: "Platform timestamp (perform time)",
+      contentType: "string",
       value: (r) => r.parsedPlatformRecord.platformActionTimestamp.toISOString(),
     },
     {
       title: "Last Envelope Transfer Chain Entry Signed Content Checksum",
-      value: (r) => r.parsedPlatformRecord.lastEnvelopeTransferChainEntrySignedContentChecksum ?? '(No checksum provided)',
+      contentType: "checksum",
+      value: (r) => r.parsedPlatformRecord.lastEnvelopeTransferChainEntrySignedContentChecksum ?? null,
     },
     {
       title: "In Response To Record",
-      value: (r) => r.parsedPlatformRecord.inResponseToRecord?.recordID ?? '(No record provided)',
+      contentType: "platformRecordID",
+      value: (r) => r.parsedPlatformRecord.inResponseToRecord?.recordID ?? null,
     },
     {
       title: "Canonical Record",
-      value: (r) => r.parsedPlatformRecord.canonicalRecord?.recordID ?? '(No record provided)',
+      contentType: "platformRecordID",
+      value: (r) => r.parsedPlatformRecord.canonicalRecord?.recordID ?? null,
     },
     {
       title: "Previous Record",
-      value: (r) => r.parsedPlatformRecord.previousRecord?.recordID ?? '(No record provided)',
+      contentType: "platformRecordID",
+      value: (r) => r.parsedPlatformRecord.previousRecord?.recordID ?? null,
     },
     {
       title: "CTR timestamp (insert time)",
+      contentType: "string",
       value: (r) => r.insertedAtTimestamp.toISOString(),
     },
     {
       title: "Inserted by (CTR auth)",
+      contentType: "string",
       value: (r) => r.insertedBy,
     },
   ]
@@ -104,10 +120,14 @@ export class RenderCtrRecordsComponent implements OnInit, OnChanges {
     if (!eblID$) {
       return;
     }
-    this.ctrRecords$ = combineLatest([eblID$, this.refresh$]).pipe(
+    const ctrRecords$ = combineLatest([eblID$, this.refresh$]).pipe(
       switchMap(data => {
         console.log("Load:", data);
         return this.ctrService.getRecordsForEBL(data[0]);
+      }),
+      shareReplay({
+        refCount: true,
+        bufferSize: 1,
       }),
       tap({
         next: (_) => {
@@ -116,6 +136,20 @@ export class RenderCtrRecordsComponent implements OnInit, OnChanges {
         error: (_) => {
           this.ctrLoadingError = true;
         }
+      }),
+    );
+    this.ctrRecords$ = ctrRecords$;
+    this.ctrRecordTable$ = ctrRecords$.pipe(
+      map(records => {
+        const m = new Map<string, ParsedCTRRecord>();
+        for (const r of records) {
+          m.set(r.recordID, r);
+        }
+        return m;
+      }),
+      shareReplay({
+        refCount: true,
+        bufferSize: 1,
       }),
     );
   }
