@@ -1,6 +1,6 @@
 <ng-container *ngIf="true">
   <form #ctrForm="ngForm">
-    <div class="row">
+    <div class="form-group m-1">
       <app-ebl-i-d-input id="eblID"
                          name="eblID"
                          [disabled]="!isCreateMode || eblIDFrozen"
@@ -11,7 +11,7 @@
     </div>
 
 
-    <div class="row">
+    <div class="form-group m-1">
       <label for="action">Action: </label>
       <p-dropdown [required]="true"
                   [(ngModel)]="action"
@@ -23,7 +23,7 @@
       </p-dropdown>
     </div>
 
-    <div class="row">
+    <div class="form-group m-1">
       <label for="actor">Actor: </label>
       <p-dropdown [required]="true"
                   [(ngModel)]="actor"
@@ -46,7 +46,7 @@
       </p-dropdown>
     </div>
 
-    <div class="row">
+    <div class="form-group m-1">
       <label for="platformActionTimestamp">Platform Action Timestamp: </label>
       <p-calendar [(ngModel)]="platformActionTimestamp"
                   id="platformActionTimestamp"
@@ -55,7 +55,7 @@
       </p-calendar>
     </div>
 
-    <div class="row">
+    <div class="form-group m-1">
       <label for="lastEnvelopeTransferChainEntrySignedContentChecksum">Last Envelope Transfer Chain Entry Signed Content Checksum: </label>
       <input id="lastEnvelopeTransferChainEntrySignedContentChecksum"
              name="lastEnvelopeTransferChainEntrySignedContentChecksum"
@@ -67,7 +67,7 @@
              type="text">
     </div>
 
-    <div class="row">
+    <div class="form-group m-1">
       <label for="inResponseToRecord">In Response To Record: </label>
       <p-dropdown [(ngModel)]="inResponseToRecord"
                   id="inResponseToRecord"
@@ -87,7 +87,7 @@
       </p-dropdown>
     </div>
 
-    <div class="row">
+    <div class="form-group m-1">
       <label for="canonicalRecord">Canonical Record: </label>
       <p-dropdown [(ngModel)]="canonicalRecord"
                   id="canonicalRecord"
@@ -107,7 +107,7 @@
       </p-dropdown>
     </div>
 
-    <div class="row">
+    <div class="form-group m-1">
       <label for="previousRecord">Previous Record: </label>
       <p-dropdown [(ngModel)]="previousRecord"
                   id="previousRecord"
@@ -128,7 +128,7 @@
       </p-dropdown>
     </div>
 
-    <div class="row">
+    <div class="form-group m-1">
       <button appDebounceClick
               pButton
               (debounceClick)="submit()"
