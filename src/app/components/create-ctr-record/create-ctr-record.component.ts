@@ -16,6 +16,7 @@ import {Globals} from '../../models/globals';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DebounceClickDirective} from '../../directives/debounce-click.directive';
 import {CalendarModule} from 'primeng/calendar';
+import {EblIDInputComponent} from '../ebl-i-d-input/ebl-i-d-input.component';
 
 
 @Component({
@@ -33,6 +34,7 @@ import {CalendarModule} from 'primeng/calendar';
     DebounceClickDirective,
     JsonPipe,
     CalendarModule,
+    EblIDInputComponent,
   ]
 })
 export class CreateCtrRecordComponent implements OnInit, OnChanges {

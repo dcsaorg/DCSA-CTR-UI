@@ -1,18 +1,15 @@
 <ng-container *ngIf="true">
   <form #ctrForm="ngForm">
     <div class="row">
-      <label for="eblID">EBL ID: </label>
-      <input id="eblID"
-             name="eblID"
-             pInputText
-             pattern="^[0-9a-f]+$"
-             minlength="64"
-             maxlength="64"
-             [disabled]="!isCreateMode || eblIDFrozen"
-             [required]="true"
-             [(ngModel)]="_eblID"
-             type="text">
+      <app-ebl-i-d-input id="eblID"
+                         name="eblID"
+                         [disabled]="!isCreateMode || eblIDFrozen"
+                         [required]="true"
+                         [allowEBLInput]="isCreateMode && !eblIDFrozen"
+                         [(ngModel)]="_eblID">
+      </app-ebl-i-d-input>
     </div>
+
 
     <div class="row">
       <label for="action">Action: </label>
