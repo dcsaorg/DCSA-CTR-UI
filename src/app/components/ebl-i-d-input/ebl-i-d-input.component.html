@@ -34,17 +34,22 @@
       (ngModelChange)="checksumEbl()">
     </textarea>
   </div>
-  <input pInputText
-         pattern="^[0-9a-f]+$"
-         minlength="64"
-         maxlength="64"
-         [disabled]="true"
-         [required]="false"
-         [ngModelOptions]="{standalone: true}"
-         [ngModel]="providedEBLID || 'Invalid eBL'"
-         type="text">
+  <div class="flex align-items-center gap-3 mb-3">
+    <label for="computedEBLID">Computed EBL ID</label>
+    <input pInputText
+           id="computedEBLID"
+           pattern="^[0-9a-f]+$"
+           minlength="64"
+           maxlength="64"
+           [disabled]="true"
+           [required]="false"
+           [ngModelOptions]="{standalone: true}"
+           [ngModel]="providedEBLID || 'Invalid eBL'"
+           type="text">
+  </div>
   <div class="flex justify-content-end gap-2">
-    <p-button label="Cancel" severity="secondary" (click)="eblDialogVisible = false" />
-    <p-button label="Accept" [disabled]="eblBroken || !providedEBLID" (click)="confirmEBL()" />
+    <br />
+    <p-button label="Accept" icon="pi pi-save" [disabled]="eblBroken || !providedEBLID" (click)="confirmEBL()" />
+    <p-button label="Cancel" icon="pi pi-trash" severity="secondary" (click)="eblDialogVisible = false" />
   </div>
 </p-dialog>
