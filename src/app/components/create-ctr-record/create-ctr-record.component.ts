@@ -17,6 +17,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DebounceClickDirective} from '../../directives/debounce-click.directive';
 import {CalendarModule} from 'primeng/calendar';
 import {EblIDInputComponent} from '../ebl-i-d-input/ebl-i-d-input.component';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 
 
 @Component({
@@ -35,6 +36,7 @@ import {EblIDInputComponent} from '../ebl-i-d-input/ebl-i-d-input.component';
     JsonPipe,
     CalendarModule,
     EblIDInputComponent,
+    OverlayPanelModule,
   ]
 })
 export class CreateCtrRecordComponent implements OnInit, OnChanges {
@@ -50,10 +52,13 @@ export class CreateCtrRecordComponent implements OnInit, OnChanges {
   canonicalRecord?: string;
   inResponseToRecord?: string;
   @Input()
-  previousRecord?: string;
+  previousRecord?: string | null;
 
   @Input()
   ctrRecords?: ParsedCTRRecord[];
+
+  @Input()
+  allowedActors: string[] | null = null;
 
   eblIDFrozen: boolean = false;
 
@@ -82,6 +87,14 @@ export class CreateCtrRecordComponent implements OnInit, OnChanges {
     return this.globals.config!;
   }
 
+  get actors(): string[] {
+    const actors = this.allowedActors;
+    if (actors === null) {
+      return this.config.platforms;
+    }
+    return actors;
+  }
+
   get record(): PlatformRecord {
     return {
       eblID: this._eblID ?? "<INVALID>",
@@ -91,7 +104,7 @@ export class CreateCtrRecordComponent implements OnInit, OnChanges {
       actor: this.actor ?? "<INVALID>",
       receiver: this.receiver ?? undefined,
       lastEnvelopeTransferChainEntrySignedContentChecksum: this.lastEnvelopeTransferChainEntrySignedContentChecksum ?? undefined,
-      previousRecord: this.previousRecord,
+      previousRecord: this.previousRecord ?? undefined,
       inResponseToRecord: this.inResponseToRecord,
       canonicalRecord: this.canonicalRecord,
     }

@@ -31,7 +31,7 @@
                   name="actor"
                   [filter]="true"
                   [showClear]="true"
-                  [options]="config.platforms">
+                  [options]="actors">
       </p-dropdown>
     </div>
 
@@ -146,17 +146,26 @@
               icon="pi pi-trash"
               class="p-button-secondary">
       </button>
+      <button label="Technical content"
+              (click)="op.toggle($event)"
+              pButton
+              appDebounceClick
+              icon="pi pi-code"
+              class="p-button-secondary">
+      </button>
       <p-progressSpinner *ngIf="submissionInProgress">
       </p-progressSpinner>
     </div>
-    <h3>Input/validation debugging</h3>
-    <div>
-      <h4 *ngIf="ctrForm.valid">Platform Record (unsigned format)</h4>
-      <h4 *ngIf="!ctrForm.valid">Platform Record (unsigned format) [INVALID]</h4>
-      <pre>{{record | json}}</pre>
-      <h4>Raw form value (not a valid record)</h4>
-      <pre>{{ctrForm.value | json}}</pre>
-    </div>
+    <p-overlayPanel #op>
+      <h3>Input/validation debugging</h3>
+      <div>
+        <h4 *ngIf="ctrForm.valid">Platform Record (unsigned format)</h4>
+        <h4 *ngIf="!ctrForm.valid">Platform Record (unsigned format) [INVALID]</h4>
+        <pre>{{record | json}}</pre>
+        <h4>Raw form value (not a valid record)</h4>
+        <pre>{{ctrForm.value | json}}</pre>
+      </div>
+    </p-overlayPanel>
   </form>
 </ng-container>
 

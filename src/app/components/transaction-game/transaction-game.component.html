@@ -1,0 +1,117 @@
+<ng-container>
+  <ng-container *ngIf="game$ | async as game; else loadingCheck">
+    <p-tabView [activeIndex]="activeIndex" (activeIndexChange)="onTabChange(game, $event)">
+      <ng-container *ngFor="let tab of game.shownTabs">
+        <p-tabPanel [disabled]="tab.disabled">
+          <ng-template pTemplate="header">
+            <ng-container *ngIf="asPlatformTab(tab) as platformTab">
+              <div [class.dirty-tab]="tab.isDirty">{{platformTab.platform.platformCode}}</div>
+            </ng-container>
+            <ng-container *ngIf="asPintTransferTab(tab)">
+              <div [class.dirty-tab]="tab.isDirty">PINT <p-badge [value]="game.pintTransfers.length" /></div>
+            </ng-container>
+            <ng-container *ngIf="asCtrTab(tab)">
+              <div [class.dirty-tab]="tab.isDirty">CTR <p-badge [value]="game.records.length" /></div>
+            </ng-container>
+          </ng-template>
+
+          <ng-container *ngIf="asCtrTab(tab)">
+            <app-ctr-record-table [eblID]="eblID$ | async"
+                                  [ctrRecords]="game.records"
+                                  [loading]="false"
+                                  [ctrLoadingError]="false">
+            </app-ctr-record-table>
+          </ng-container>
+          <ng-container *ngIf="asPintTransferTab(tab)">
+            <app-render-pint-transfers [pintTransfers]="game.pintTransfers"
+                                       (answered)="pintTransferAnswered(game, $event)"
+                                       [allowAnswering]="true">
+            </app-render-pint-transfers>
+          </ng-container>
+          <ng-container *ngIf="asPlatformTab(tab) as platformTab">
+            <p-card *ngIf="platformTab.platform.activeIncomingTransfers as transfers">
+              <h1>Unanswered incoming PINT requests</h1>
+              <app-render-pint-transfers [pintTransfers]="transfers"
+                                         (answered)="pintTransferAnswered(game, $event)"
+                                         [allowAnswering]="true">
+              </app-render-pint-transfers>
+            </p-card>
+            <h1>Known CTR records</h1>
+            <app-ctr-record-table [eblID]="eblID$ | async"
+                                  [ctrRecords]="platformTab.knownCTRRecords"
+                                  [loading]="false"
+                                  [ctrLoadingError]="false">
+            </app-ctr-record-table>
+
+            <p-card *ngIf="platformTab.platform.allPINTTransfers.length > 0">
+              <ng-container *ngIf="platformTab.platform.allPINTTransfers as transfers">
+                <h1>Pending Outgoing PINT transfers</h1>
+                <app-render-pint-transfers [pintTransfers]="transfers"
+                                           [allowAnswering]="false">
+                </app-render-pint-transfers>
+              </ng-container>
+            </p-card>
+          </ng-container>
+        </p-tabPanel>
+      </ng-container>
+    </p-tabView>
+
+    <p-tabView>
+      <p-tabPanel [disabled]="!eblIDHasValidForm(game.eblID)" header="Initiate PINT transfer">
+        <p-card>
+          <h2></h2>
+          <app-create-pint-transfer [allowedActors]="game.activeActors"
+                                    [transferID]="game.pintTransfers.length"
+                                    (created)="pintTransferInitiated(game, $event)">
+          </app-create-pint-transfer>
+        </p-card>
+      </p-tabPanel>
+      <p-tabPanel [disabled]="!eblIDHasValidForm(game.eblID)" header="Create CTR record">
+        <p-card>
+          <h2 *ngIf="!isKnownEblID(game.eblID)">Create first record</h2>
+          <h2 *ngIf="isKnownEblID(game.eblID)">Append record</h2>
+          <app-create-ctr-record [eblID]="game.eblID"
+                                 [allowedActors]="game.activeActors"
+                                 [previousRecord]="game.lastRecord?.recordID"
+                                 [ctrRecords]="game.records"
+                                 (created)="refresh(game)">
+          </app-create-ctr-record>
+        </p-card>
+      </p-tabPanel>
+      <p-tabPanel [disabled]="!eblIDHasValidForm(game.eblID)" header="Preferences">
+        <app-transaction-game-config [(ngModel)]="gamePreferences" (ngModelChange)="preferenceChange(game)">
+        </app-transaction-game-config>
+      </p-tabPanel>
+    </p-tabView>
+
+  </ng-container>
+</ng-container>
+
+<ng-template #loadingCheck>
+  <ng-container *ngIf="eblID$ | async as eblID; else loading">
+    <ng-container *ngIf="!eblIDHasValidForm(eblID)">
+      <p-tag styleClass="mr-2"
+             icon="pi pi-info-circle"
+             severity="warning"
+             value="Error">
+      </p-tag>
+      <div class="field-note">
+        Cannot continue; EBL ID is not valid
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #loading>
+  <p-progressSpinner></p-progressSpinner>
+  <p-tag styleClass="mr-2"
+         icon="pi pi-info-circle"
+         severity="info"
+         value="Info">
+  </p-tag>
+  <div class="field-note">
+    Setting up, please wait.
+  </div>
+</ng-template>
+
+<p-toast key="GenericSuccessToast" position="bottom-right"></p-toast>

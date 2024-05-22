@@ -31,6 +31,6 @@ export class StartPageComponent {
               ) {}
 
   async onCreated(record: ParsedCTRRecord) {
-    await this.router.navigate(['/records', record.parsedPlatformRecord.eblID])
+    await this.router.navigate(['/transaction-game', record.parsedPlatformRecord.eblID])
   }
 }

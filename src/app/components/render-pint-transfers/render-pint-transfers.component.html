@@ -1,0 +1,39 @@
+<p-table [value]="pintTransfers ?? []"
+         [autoLayout]="true"
+         [loading]="pintTransfers === undefined"
+         [rowTrackBy]="trackByIndexFunction"
+         [metaKeySelection]="true"
+         (onEditComplete)="onEditComplete($event)"
+         responsiveLayout="scroll">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Sender</th>
+      <th>Receiver</th>
+      <th>Answer</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="3">No transfers yet</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-row>
+    <tr>
+      <td>{{row.sender}}</td>
+      <td>{{row.receiver}}</td>
+      <td *ngIf="row.answer as answer">{{answer}}</td>
+      <td *ngIf="!row.answer">
+        <ng-container *ngIf="allowAnswering">
+          <p-dropdown [(ngModel)]="row.answer"
+                      [showClear]="true"
+                      [filter]="true"
+                      appendTo="body"
+                      (ngModelChange)="onAnswerChange(row)"
+                      [options]="pintTransferActions">
+          </p-dropdown>
+        </ng-container>
+        <ng-container *ngIf="!allowAnswering">(unanswered)</ng-container>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -1,74 +1,9 @@
-<p-table [columns]="columns"
-         [value]="(ctrRecords$ | async) ?? []"
-         [autoLayout]="true"
-         [loading]="(ctrRecords$ | async) === null"
-         [rowTrackBy]="trackByFunction"
-         [metaKeySelection]="true"
-         responsiveLayout="scroll"
-         #dt>
-  <ng-template pTemplate="caption">
-    Records for EBL
-  </ng-template>
-  <ng-template pTemplate="header" let-columnsUntyped>
-    <tr *ngIf="asColumns(columnsUntyped) as columns">
-      <th *ngFor="let column of columns">{{column.title}}</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="emptymessage">
-    <tr>
-      <ng-container *ngIf="ctrLoadingError">
-        <p-tag styleClass="mr-2"
-               icon="pi pi-info-circle"
-               severity="warning"
-               value="Error">
-        </p-tag>
-        <div class="field-note">
-          Error while loading records about the requested eBL
-        </div>
-      </ng-container>
-      <ng-container *ngIf="!ctrLoadingError">
-        <ng-container *ngIf="eblID$ | async as eblID">
-          <td *ngIf="eblIDHasValidForm(eblID)" [attr.colspan]="columns.length">No records for this eBL (or, you have no permissions to read the records)</td>
-          <td *ngIf="!eblIDHasValidForm(eblID)" [attr.colspan]="columns.length">The EBL ID does not seem to be correct. Expected a checksum of 64 characters</td>
-        </ng-container>
-      </ng-container>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-row let-columnsUntyped="columns">
-    <tr *ngIf="asColumns(columnsUntyped) as columns">
-      <ng-container *ngFor="let col of columns" [ngSwitch]="col.contentType">
-        <ng-container *ngSwitchCase="'platformRecordID'">
-          <td>
-            <ng-container *ngIf="col.value(row) as recordID; else renderOmitted">
-              <ng-container *ngIf="ctrRecordTable$ | async as ctrRecordTable; else renderRecordIDFallback">
-                <ng-container *ngIf="ctrRecordTable.get(recordID) as matchedRecord; else renderRecordIDFallback">
-                  {{matchedRecord.recordNumber}} (<abbr title="{{recordID}}">{{recordID | slice:0:7}})</abbr>
-                </ng-container>
-              </ng-container>
-              <ng-template #renderRecordIDFallback>
-                <abbr title="{{recordID}}">{{recordID | slice:0:7}}</abbr>
-              </ng-template>
-            </ng-container>
-          </td>
-        </ng-container>
-        <ng-container *ngSwitchCase="'checksum'">
-          <td>
-            <ng-container *ngIf="col.value(row) as checksum; else renderOmitted">
-              <abbr title="{{checksum}}">{{checksum | slice:0:7}}</abbr>
-            </ng-container>
-          </td>
-        </ng-container>
-        <ng-container *ngSwitchDefault>
-          <td>{{col.value(row)}}</td>
-        </ng-container>
-      </ng-container>
-    </tr>
-  </ng-template>
-</p-table>
+<app-ctr-record-table [eblID]="eblID$ | async"
+                      [ctrRecords]="(ctrRecords$ | async) ?? []"
+                      [loading]="!ctrLoadingError && !(ctrRecords$ | async)"
+                      [ctrLoadingError]="ctrLoadingError">
+</app-ctr-record-table>
 
-<ng-template #renderOmitted>
-  (Omitted)
-</ng-template>
 
 <ng-container *ngIf="ctrRecords$ | async as ctrRecords">
   <ng-container *ngIf="ctrRecords && ctrRecords.length > 0">

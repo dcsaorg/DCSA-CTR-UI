@@ -11,11 +11,11 @@ import {AsyncPipe, JsonPipe, NgForOf, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefa
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {DebounceClickDirective} from '../../directives/debounce-click.directive';
 import {CalendarModule} from 'primeng/calendar';
-import {BehaviorSubject, combineLatest, map, Observable, shareReplay, switchMap, tap, zip} from 'rxjs';
-import {CTRRecord, isValidEBLID, ParsedCTRRecord} from '../../models/records';
+import {BehaviorSubject, combineLatest, map, Observable, shareReplay, switchMap, tap} from 'rxjs';
+import {isValidEBLID, ParsedCTRRecord} from '../../models/records';
 import {CreateCtrRecordComponent} from '../create-ctr-record/create-ctr-record.component';
 import {TableModule} from 'primeng/table';
-import {Column} from '../../models/table-models';
+import {CtrRecordTableComponent} from '../ctr-record-table/ctr-record-table.component';
 
 @Component({
   selector: 'app-render-ctr-records',
@@ -41,7 +41,8 @@ import {Column} from '../../models/table-models';
     NgSwitch,
     NgSwitchDefault,
     NgSwitchCase,
-    SlicePipe
+    SlicePipe,
+    CtrRecordTableComponent
   ]
 })
 export class RenderCtrRecordsComponent implements OnInit, OnChanges {
@@ -53,63 +54,6 @@ export class RenderCtrRecordsComponent implements OnInit, OnChanges {
   ctrLoadingError: boolean = false;
   refresh$ = new BehaviorSubject<number>(0);
 
-  columns: Column<ParsedCTRRecord>[] = [
-    {
-      title: "Record ID",
-      contentType: "platformRecordID",
-      value: (r) => r.recordID,
-    },
-    {
-      title: "Actor",
-      contentType: "string",
-      value: (r) => r.parsedPlatformRecord.actor,
-    },
-    {
-      title: "Action",
-      contentType: "string",
-      value: (r) => r.parsedPlatformRecord.action,
-    },
-    {
-      title: "Receiver",
-      contentType: "string",
-      value: (r) => r.parsedPlatformRecord.receiver ?? '(No receiver provided)',
-    },
-    {
-      title: "Platform timestamp (perform time)",
-      contentType: "string",
-      value: (r) => r.parsedPlatformRecord.platformActionTimestamp.toISOString(),
-    },
-    {
-      title: "Last Envelope Transfer Chain Entry Signed Content Checksum",
-      contentType: "checksum",
-      value: (r) => r.parsedPlatformRecord.lastEnvelopeTransferChainEntrySignedContentChecksum ?? null,
-    },
-    {
-      title: "In Response To Record",
-      contentType: "platformRecordID",
-      value: (r) => r.parsedPlatformRecord.inResponseToRecord?.recordID ?? null,
-    },
-    {
-      title: "Canonical Record",
-      contentType: "platformRecordID",
-      value: (r) => r.parsedPlatformRecord.canonicalRecord?.recordID ?? null,
-    },
-    {
-      title: "Previous Record",
-      contentType: "platformRecordID",
-      value: (r) => r.parsedPlatformRecord.previousRecord?.recordID ?? null,
-    },
-    {
-      title: "CTR timestamp (insert time)",
-      contentType: "string",
-      value: (r) => r.insertedAtTimestamp.toISOString(),
-    },
-    {
-      title: "Inserted by (CTR auth)",
-      contentType: "string",
-      value: (r) => r.insertedBy,
-    },
-  ]
 
   constructor(private ctrService: CtrService,
               ) {
@@ -160,15 +104,6 @@ export class RenderCtrRecordsComponent implements OnInit, OnChanges {
 
   ngOnChanges(_changes: SimpleChanges): void {
     this.startPipeline();
-  }
-
-  trackByFunction(_index: number, record: ParsedCTRRecord): any {
-    return record.recordID;
-  }
-
-  // Work around templates losing type information
-  asColumns(untyped: any): Column<ParsedCTRRecord>[] {
-    return untyped;
   }
 
   eblIDHasValidForm(eblID: string): boolean {

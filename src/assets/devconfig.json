@@ -1,14 +1,14 @@
 {
   "platforms": [
-    "WAVE",
-    "CARX",
-    "ESSD",
-    "IDT",
     "BOLE",
+    "CARX",
     "EDOX",
+    "ESSD",
+    "ETEU",
+    "IDT",
     "IQAX",
     "SECR",
     "TRGO",
-    "ETEU"
+    "WAVE"
   ]
 }

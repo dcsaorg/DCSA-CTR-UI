@@ -1,0 +1,8 @@
+<p-card header="Configuration">
+  <label for="alwaysShowAllTabs">Always show all tabs: </label>
+  <p-inputSwitch [disabled]="disabled"
+                 [ngModelOptions]="{standalone: true}"
+                 [(ngModel)]="gamePreferences.alwaysShowAllTabs"
+                 (ngModelChange)="changedHandler()"
+                 inputId="alwaysShowAllTabs"/>
+</p-card>

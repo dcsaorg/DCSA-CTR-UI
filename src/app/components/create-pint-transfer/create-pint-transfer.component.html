@@ -1,0 +1,54 @@
+<ng-container *ngIf="true">
+  <form #ctrForm="ngForm">
+    <div class="form-group m-1">
+      <label for="sender">Sender: </label>
+      <p-dropdown [required]="true"
+                  [(ngModel)]="sender"
+                  id="sender"
+                  name="sender"
+                  [filter]="true"
+                  [showClear]="true"
+                  [options]="actors">
+      </p-dropdown>
+    </div>
+
+    <div class="row">
+      <label for="receiver">Receiver: </label>
+      <p-dropdown [(ngModel)]="receiver"
+                  id="receiver"
+                  name="receiver"
+                  [filter]="true"
+                  [showClear]="true"
+                  [options]="config.platforms">
+      </p-dropdown>
+    </div>
+
+    <div class="form-group m-1">
+      <button appDebounceClick
+              pButton
+              (debounceClick)="submit()"
+              [debounceTime]="200"
+              [disabled]="submissionInProgress || !ctrForm.valid || !isContentValid || (ctrForm.pristine ?? false)"
+              icon="pi pi-save"
+              label="Initiate Transfer"
+              iconPos="left">
+      </button>
+      <button label="Clear"
+              pButton
+              appDebounceClick
+              [disabled]="submissionInProgress"
+              (debounceClick)="clear()"
+              icon="pi pi-trash"
+              class="p-button-secondary">
+      </button>
+      <p-progressSpinner *ngIf="submissionInProgress">
+      </p-progressSpinner>
+    </div>
+  </form>
+</ng-container>
+
+<p-toast key="GenericSuccessToast" position="bottom-right"></p-toast>
+<p-toast key="GenericErrorToast" position="bottom-right"></p-toast>
+
+<p-confirmDialog [transitionOptions]="'0ms'">
+</p-confirmDialog>
