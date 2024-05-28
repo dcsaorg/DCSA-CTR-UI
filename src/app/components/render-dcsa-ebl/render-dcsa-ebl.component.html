@@ -1,0 +1,36 @@
+<p-card *ngIf="ebl as ebl; else loading">
+  <p-floatLabel>
+    <input id="transportDocumentReference"
+           name="transportDocumentReference"
+           [ngModel]="ebl.transportDocumentReference"
+           pInputText>
+    <label for="transportDocumentReference">transportDocumentReference</label>
+  </p-floatLabel>
+
+  <button label="Display as JSON"
+          (click)="rawVisible = true"
+          pButton
+          appDebounceClick
+          icon="pi pi-code"
+          class="p-button-secondary">
+  </button>
+
+  <p-dialog header="EBL in JSON" [modal]="true" [(visible)]="rawVisible" [style]="{ width: '80%' }">
+    <pre>{{ebl | json}}</pre>
+    <div class="flex justify-content-end gap-2">
+      <p-button label="Close" (click)="rawVisible = false" />
+    </div>
+  </p-dialog>
+</p-card>
+
+<ng-template #loading>
+  <p-progressSpinner></p-progressSpinner>
+  <p-tag styleClass="mr-2"
+         icon="pi pi-info-circle"
+         severity="info"
+         value="Info">
+  </p-tag>
+  <div class="field-note">
+    Setting up, please wait.
+  </div>
+</ng-template>

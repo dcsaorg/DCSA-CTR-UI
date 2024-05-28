@@ -1,0 +1,95 @@
+<div class="grid">
+  <div class="col-4">
+    <p-card [style]='{ borderRadius: "25px" }'>
+      <h1>{{platformUser.name}} ({{platformUser.platform}})</h1>
+      <div class="field">
+        <button label="Show EBL"
+                (click)="eblVisible = true"
+                pButton
+                appDebounceClick
+                icon="pi pi-book"
+                class="p-button-secondary">
+        </button>
+      </div>
+
+      <div class="field">
+        <p-dropdown [(ngModel)]="receiver"
+                    #receiverModel="ngModel"
+                    id="receiver"
+                    name="receiver"
+                    placeholder="Receiver"
+                    [ngModelOptions]="{standalone: true}"
+                    [filter]="true"
+                    [showClear]="true"
+                    [required]="true"
+                    [options]="selectableUsers">
+          <ng-template pTemplate="item" let-item>
+            {{item.name}} ({{item.platform}})
+          </ng-template>
+          <ng-template pTemplate="selectedItem" let-item>
+            {{item.name}} ({{item.platform}})
+          </ng-template>
+        </p-dropdown>
+      </div>
+      <button label="{{!transferStarted ? 'Transfer' : ''}}"
+              pButton
+              appDebounceClick
+              [class.p-button-rounded]="transferStarted"
+              [disabled]="!receiverModel.valid"
+              [loading]="transferStarted"
+              (debounceClick)="initiateTransfer()"
+              icon="pi pi-send">
+      </button>
+    </p-card>
+  </div>
+
+  <div class="col-4">
+    <p-card [style]='{ borderRadius: "25px" }'>
+      <h1>Receiving platform</h1>
+      <div class="field">
+        <button label="Show EBL"
+                (click)="eblVisible = true"
+                [disabled]="!transferStarted"
+                pButton
+                appDebounceClick
+                icon="pi pi-book"
+                class="p-button-secondary">
+        </button>
+      </div>
+      <button label="Accept"
+              pButton
+              appDebounceClick
+              class="accept-button"
+              [disabled]="!transferStarted"
+              (debounceClick)="acceptTransfer()"
+              icon="pi pi-check">
+      </button>
+
+      <button label="Reject"
+              pButton
+              appDebounceClick
+              class="reject-button"
+              [disabled]="!transferStarted"
+              (debounceClick)="rejectRecord()"
+              icon="pi pi-times">
+      </button>
+
+      <button label="Dispute"
+              pButton
+              appDebounceClick
+              class="dispute-button"
+              [disabled]="!transferStarted"
+              (debounceClick)="disputeRecord()"
+              icon="pi pi-exclamation-triangle">
+      </button>
+    </p-card>
+  </div>
+</div>
+
+<p-dialog header="EBL" [modal]="true" [(visible)]="eblVisible" [style]="{ width: '80%' }">
+  <app-render-dcsa-ebl [ebl]="ebl">
+  </app-render-dcsa-ebl>
+</p-dialog>
+
+<p-toast key="GenericSuccessToast" position="bottom-right"></p-toast>
+<p-toast key="GenericErrorToast" position="bottom-right"></p-toast>

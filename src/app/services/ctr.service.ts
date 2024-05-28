@@ -15,38 +15,58 @@ export class CtrService {
 
   constructor() {}
 
-  private requiredRecord(eblID: string, recordID: string): ParsedCTRRecord {
-    const record = this.records.get(recordID);
+  private requiredRecord(eblID: string, recordID: string, recordTable: Map<string, ParsedCTRRecord>): ParsedCTRRecord {
+    const record= recordTable.get(recordID);
     if (!record || record.parsedPlatformRecord.eblID !== eblID) {
-      throw Error("Unknown record or the record is not valid for this eBL");
+      throw new Error("Unknown record or the record is not valid for this eBL");
     }
     return record;
   }
 
   postRecord(record: PlatformRecord): Observable<ParsedCTRRecord> {
-    const eblID = record.eblID
-    const previousRecord = record.previousRecord ? this.records.get(record.previousRecord) : undefined;
-    let inResponseToRecord;
-    let canonicalRecord;
+    let parsedCTRRecord;
+    const eblID = record.eblID;
+    const existingRecords$ = this.state.get(eblID);
+    const existingRecords: ParsedCTRRecord[] = existingRecords$?.value ?? [];
     try {
-      inResponseToRecord = record.inResponseToRecord ? this.requiredRecord(eblID, record.inResponseToRecord) : undefined;
-      canonicalRecord = record.canonicalRecord ? this.requiredRecord(eblID, record.canonicalRecord) : undefined;
+      parsedCTRRecord = this.generatePlatformRecord(record, existingRecords, this.records);
     } catch (e) {
       return throwError(() => e);
     }
-    const existingRecords$ = this.state.get(eblID);
-    let existingRecords: ParsedCTRRecord[] = existingRecords$?.value ?? [];
+
+    // Use an observable to ensure nothing happens unless someone subscribes
+    // (to closer match how the service will work with proper API integration)
+    return of(parsedCTRRecord).pipe(
+      tap(record => {
+        this.records.set(record.recordID, record);
+        if (!existingRecords$) {
+          const state = new BehaviorSubject<ParsedCTRRecord[]>([record]);
+          this.state.set(eblID, state);
+        } else  {
+          const newRecords = [...existingRecords];
+          newRecords.push(record);
+          existingRecords$.next(newRecords);
+        }
+      })
+    );
+  }
+
+  generatePlatformRecord(record: PlatformRecord, existingRecords: ParsedCTRRecord[], recordTable: Map<string, ParsedCTRRecord>): ParsedCTRRecord {
+    const eblID = record.eblID
+    const previousRecord = record.previousRecord ? recordTable.get(record.previousRecord) : undefined;
+    const inResponseToRecord = record.inResponseToRecord ? this.requiredRecord(eblID, record.inResponseToRecord, recordTable) : undefined;
+    const canonicalRecord = record.canonicalRecord ? this.requiredRecord(eblID, record.canonicalRecord, recordTable) : undefined;
+
     let recordNumber = 1;
-    if (!existingRecords$ || existingRecords.length < 1) {
+    if (existingRecords.length < 1) {
       if (record.previousRecord) {
-        return throwError(() => Error("Conflict: Bad previous previousRecord (should have been empty)"));
+        throw new Error("Conflict: Bad previous previousRecord (should have been empty)");
       }
     } else if (existingRecords.length > 0 && !record.previousRecord) {
-      return throwError(() => Error("Conflict: Bad previous previousRecord (should have been present)"));
+      throw new Error("Conflict: Bad previous previousRecord (should have been present)");
     } else {
-      console.log(existingRecords, existingRecords$)
       if (existingRecords[existingRecords.length - 1].recordID !== record.previousRecord) {
-        return throwError(() => Error("Conflict: Bad previous previousRecord (does not match)"));
+        throw new Error("Conflict: Bad previous previousRecord (does not match)");
       } else {
         recordNumber = existingRecords[existingRecords.length - 1].recordNumber + 1;
       }
@@ -55,7 +75,7 @@ export class CtrService {
     // TODO: Create a proper signed record and checksum it, so the record ID is correct.
     // - for now a UUID is used as a placeholder.
     const recordID = sha256HashFunc.update(uuidv4()).digest('hex');
-    let parsedCTRRecord: ParsedCTRRecord = {
+    return {
       recordID: recordID,
       recordNumber,
       insertedAtTimestamp: new Date(),
@@ -72,21 +92,6 @@ export class CtrService {
         previousRecord,
       }
     }
-    // Use an observable to ensure nothing happens unless someone subscribes
-    // (to closer match how the service will work with proper API integration)
-    return of(parsedCTRRecord).pipe(
-      tap(record => {
-        this.records.set(record.recordID, record);
-        if (!existingRecords$) {
-          const state = new BehaviorSubject<ParsedCTRRecord[]>([record]);
-          this.state.set(eblID, state);
-        } else  {
-          const newRecords = [...existingRecords];
-          newRecords.push(record);
-          existingRecords$.next(newRecords);
-        }
-      })
-    );
   }
 
   getRecordsForEBL(eblID: string): Observable<ParsedCTRRecord[]> {

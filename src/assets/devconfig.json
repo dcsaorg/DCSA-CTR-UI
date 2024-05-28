@@ -10,5 +10,51 @@
     "SECR",
     "TRGO",
     "WAVE"
+  ],
+  "demoUsers": [
+    {
+      "platform": "BOLE",
+      "name": "Shipper"
+    },
+    {
+      "platform": "CARX",
+      "name": "Consignee"
+    },
+    {
+      "platform": "EDOX",
+      "name": "Carrier"
+    },
+    {
+      "platform": "ESSD",
+      "name": "Bank of A"
+    },
+    {
+      "platform": "ETEU",
+      "name": "Bank of B"
+    },
+    {
+      "platform": "IDT",
+      "name": "Bank of C"
+    },
+    {
+      "platform": "IQAX",
+      "name": "Bank of D"
+    },
+    {
+      "platform": "IQAX",
+      "name": "Bank of E"
+    },
+    {
+      "platform": "SECR",
+      "name": "Bank of F"
+    },
+    {
+      "platform": "TRGO",
+      "name": "Bank of G"
+    },
+    {
+      "platform": "WAVE",
+      "name": "Bank of G"
+    }
   ]
 }

@@ -1,0 +1,19 @@
+<p-tabView>
+  <ng-container *ngFor="let platformUser of config.demoUsers">
+    <p-tabPanel header="{{platformUser.platform}}">
+      <app-dcsa-week-demo-platform [platformUser]="platformUser"
+                                   [ebl]="ebl()"
+                                   [eblChecksum]="eblChecksum()"
+                                   (ctrRecordCreated)="newCtrRecord($event)"
+                                   [ctrRecords]="ctrRecords"
+                                   [ctrRecordTable]="ctrRecordTable">
+      </app-dcsa-week-demo-platform>
+    </p-tabPanel>
+  </ng-container>
+</p-tabView>
+
+<hr>
+<h1>CTR</h1>
+<app-ctr-record-table [ctrRecords]="ctrRecords"
+                      [dcsaDemo]="true">
+</app-ctr-record-table>

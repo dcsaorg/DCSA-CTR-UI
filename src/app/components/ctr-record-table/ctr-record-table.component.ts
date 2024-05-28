@@ -15,6 +15,10 @@ import {CreateCtrRecordComponent} from '../create-ctr-record/create-ctr-record.c
 import {TableModule} from 'primeng/table';
 import {Column} from '../../models/table-models';
 
+interface CtrColumn<T> extends Column<T> {
+  dcsaWeekDemoField: boolean
+}
+
 @Component({
   selector: 'app-ctr-record-table',
   templateUrl: './ctr-record-table.component.html',
@@ -57,65 +61,81 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
   @Input()
   ctrLoadingError: boolean = false;
 
+  @Input()
+  dcsaDemo: boolean = false;
+
   ctrRecordTable: Map<string, ParsedCTRRecord> = new Map<string, ParsedCTRRecord>();
 
-  columns: Column<ParsedCTRRecord>[] = [
+  allColumns: CtrColumn<ParsedCTRRecord>[] = [
     {
       title: "Record ID",
       contentType: "platformRecordID",
+      dcsaWeekDemoField: true,
       value: (r) => r.recordID,
     },
     {
       title: "Actor",
       contentType: "string",
+      dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.actor,
     },
     {
       title: "Action",
       contentType: "string",
+      dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.action,
     },
     {
       title: "Receiver",
       contentType: "string",
+      dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.receiver ?? '(No receiver provided)',
     },
     {
       title: "Platform timestamp (perform time)",
       contentType: "string",
+      dcsaWeekDemoField: false,
       value: (r) => r.parsedPlatformRecord.platformActionTimestamp.toISOString(),
     },
     {
       title: "Last Envelope Transfer Chain Entry Signed Content Checksum",
       contentType: "checksum",
+      dcsaWeekDemoField: false,
       value: (r) => r.parsedPlatformRecord.lastEnvelopeTransferChainEntrySignedContentChecksum ?? null,
     },
     {
       title: "In Response To Record",
       contentType: "platformRecordID",
+      dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.inResponseToRecord?.recordID ?? null,
     },
     {
       title: "Canonical Record",
       contentType: "platformRecordID",
+      dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.canonicalRecord?.recordID ?? null,
     },
     {
       title: "Previous Record",
       contentType: "platformRecordID",
+      dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.previousRecord?.recordID ?? null,
     },
     {
       title: "CTR timestamp (insert time)",
       contentType: "string",
+      dcsaWeekDemoField: false,
       value: (r) => r.insertedAtTimestamp.toISOString(),
     },
     {
       title: "Inserted by (CTR auth)",
       contentType: "string",
+      dcsaWeekDemoField: false,
       value: (r) => r.insertedBy,
     },
   ]
+
+  columns = this.allColumns;
 
   constructor() {
   }
@@ -126,6 +146,11 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
       m.set(r.recordID, r);
     }
     this.ctrRecordTable = m;
+    if (this.dcsaDemo) {
+      this.columns = this.allColumns.filter(v => v.dcsaWeekDemoField);
+    } else {
+      this.columns = this.allColumns
+    }
   }
 
   ngOnInit(): void {
