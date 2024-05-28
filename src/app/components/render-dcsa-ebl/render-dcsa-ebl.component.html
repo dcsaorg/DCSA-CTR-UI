@@ -1,11 +1,82 @@
 <p-card *ngIf="ebl as ebl; else loading">
-  <p-floatLabel>
-    <input id="transportDocumentReference"
-           name="transportDocumentReference"
-           [ngModel]="ebl.transportDocumentReference"
-           pInputText>
-    <label for="transportDocumentReference">transportDocumentReference</label>
-  </p-floatLabel>
+  <div class="field">
+    <p-floatLabel>
+      <input id="transportDocumentReference"
+             name="transportDocumentReference"
+             [ngModel]="ebl.transportDocumentReference"
+             pInputText>
+      <label for="transportDocumentReference">Transport Document Reference</label>
+    </p-floatLabel>
+    <br>
+  </div>
+
+  <div class="field">
+    <p-floatLabel>
+      <input id="carrierCode"
+             name="carrierCode"
+             [ngModel]="ebl.carrierCode"
+             pInputText>
+      <label for="carrierCode">Carrier (SMDG Code)</label>
+    </p-floatLabel>
+    <br>
+  </div>
+
+  <div class="field">
+    <p-floatLabel>
+      <input id="plannedDepartureDate"
+             name="plannedDepartureDate"
+             [ngModel]="ebl.transports.plannedDepartureDate"
+             pInputText>
+      <label for="plannedDepartureDate">Planned Departure Date</label>
+    </p-floatLabel>
+    <br>
+  </div>
+
+  <div class="field">
+    <p-floatLabel>
+      <input id="portOfLoading"
+             name="portOfLoading"
+             [ngModel]="ebl.transports.portOfLoading.UNLocationCode"
+             pInputText>
+      <label for="portOfLoading">Port of Loading</label>
+    </p-floatLabel>
+    <br>
+  </div>
+
+  <div class="field">
+    <p-floatLabel>
+      <input id="plannedArrivalDate"
+             name="plannedArrivalDate"
+             [ngModel]="ebl.transports.plannedArrivalDate"
+             pInputText>
+      <label for="plannedArrivalDate">Planned Arrival Date</label>
+    </p-floatLabel>
+    <br>
+  </div>
+
+  <div class="field">
+    <p-floatLabel>
+      <input id="portOfDischarge"
+             name="portOfDischarge"
+             [ngModel]="ebl.transports.portOfDischarge.UNLocationCode"
+             pInputText>
+      <label for="portOfDischarge">Port of Discharge</label>
+    </p-floatLabel>
+    <br>
+  </div>
+
+  <div class="field">
+    <p-floatLabel>
+      <input id="vesselName"
+             name="vesselName"
+             [ngModel]="ebl.transports.vesselVoyage[0].vesselName"
+             pInputText>
+      <label for="vesselName">Vessel Name</label>
+    </p-floatLabel>
+    <br>
+  </div>
+
+  <p>Details about consignment items + utilized transport equipment + other details would be here</p>
 
   <button label="Display as JSON"
           (click)="rawVisible = true"
@@ -15,7 +86,7 @@
           class="p-button-secondary">
   </button>
 
-  <p-dialog header="EBL in JSON" [modal]="true" [(visible)]="rawVisible" [style]="{ width: '80%' }">
+  <p-dialog header="EBL in JSON" [modal]="true" [(visible)]="rawVisible" [style]="{ width: '100%', height: '100%' }">
     <pre>{{ebl | json}}</pre>
     <div class="flex justify-content-end gap-2">
       <p-button label="Close" (click)="rawVisible = false" />
