@@ -54,7 +54,7 @@ import {v4 as uuidv4} from 'uuid';
     '.p-button.dispute-button.p-component:disabled { background: darkgrey }',
     '.button-loading { background: yellow; color: black; }',
     '.button-loading:focus { box-shadow: 0 0 0 0.2rem yellow; }',
-    //
+    '.text-center { text-align: center }',
   ],
   standalone: true,
   imports: [
