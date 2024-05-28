@@ -28,7 +28,7 @@ import {TableModule} from 'primeng/table';
 import {AccordionModule} from 'primeng/accordion';
 import {RenderPintTransfersComponent} from '../render-pint-transfers/render-pint-transfers.component';
 import {ToastModule} from 'primeng/toast';
-import {EBLS} from '../../models/dcsa-week-demo';
+import {EBLS, PlatformUser} from '../../models/dcsa-week-demo';
 import {RenderDcsaEblComponent} from '../render-dcsa-ebl/render-dcsa-ebl.component';
 import {DialogModule} from 'primeng/dialog';
 import {ButtonModule} from 'primeng/button';
@@ -110,6 +110,7 @@ export class DcsaWeekDemoComponent {
   })
   ctrRecords: ParsedCTRRecord[] = [];
   ctrRecordTable = new Map<string, ParsedCTRRecord>();
+  activeIndex: number = 0;
 
   constructor(private globals: Globals,
               ) {
@@ -120,6 +121,10 @@ export class DcsaWeekDemoComponent {
     return this.globals.config!;
   }
 
+  public get demoUsers(): PlatformUser[] {
+    return this.config.demoUsers;
+  }
+
   newCtrRecord(ctrRecord: ParsedCTRRecord): void {
     const ctrRecordTable = this.ctrRecordTable;
     // Copy to force update in the UI (template)
@@ -127,5 +132,13 @@ export class DcsaWeekDemoComponent {
     ctrRecordTable.set(ctrRecord.recordID, ctrRecord);
     ctrRecords.push(ctrRecord)
     this.ctrRecords = ctrRecords;
+  }
+
+  switchPlatform(selectedPlatform: string): void {
+    const index = this.demoUsers.findIndex(p => p.platform === selectedPlatform);
+    if (index < 0) {
+      return;
+    }
+    this.activeIndex = index;
   }
 }

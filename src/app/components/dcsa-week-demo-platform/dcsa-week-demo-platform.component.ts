@@ -115,6 +115,8 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
   @Output()
   ctrRecordCreated = new EventEmitter<ParsedCTRRecord>();
 
+  @Output()
+  platformChange = new EventEmitter<string>();
 
   eblVisible: boolean = false;
   receiver?: PlatformUser;
@@ -215,12 +217,14 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     };
     this.createRecord(platformRecord);
     this.transferStarted = false;
+    this.receiver = undefined;
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',
       summary: "Transfer complete",
       detail: 'Transfer accepted and CTR updated with a TRANSFER ACCEPTED'
     });
+    this.platformChange.emit(receiver.platform);
   }
 
   rejectRecord(): void {
@@ -242,7 +246,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
       platformActionTimestamp: new Date().getTime(),
       previousRecord: ctrRecords[ctrRecords.length - 1].recordID,
     };
-    this.createRecord (platformRecord);
+    this.createRecord(platformRecord);
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',
@@ -250,6 +254,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
       detail: 'Transfer rejected.'
     });
     this.transferStarted = false;
+    this.receiver = undefined;
   }
 
   disputeRecord(): void {
@@ -270,6 +275,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     };
     this.createRecord(platformRecord);
     this.transferStarted = false;
+    this.receiver = undefined;
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',

@@ -1,10 +1,11 @@
-<p-tabView>
-  <ng-container *ngFor="let platformUser of config.demoUsers">
+<p-tabView [(activeIndex)]="activeIndex">
+  <ng-container *ngFor="let platformUser of demoUsers">
     <p-tabPanel header="{{platformUser.platform}}">
       <app-dcsa-week-demo-platform [platformUser]="platformUser"
                                    [ebl]="ebl()"
                                    [eblChecksum]="eblChecksum()"
                                    (ctrRecordCreated)="newCtrRecord($event)"
+                                   (platformChange)="switchPlatform($event)"
                                    [ctrRecords]="ctrRecords"
                                    [ctrRecordTable]="ctrRecordTable">
       </app-dcsa-week-demo-platform>
