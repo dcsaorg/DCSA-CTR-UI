@@ -30,7 +30,7 @@ import {AccordionModule} from 'primeng/accordion';
 import {RenderPintTransfersComponent} from '../render-pint-transfers/render-pint-transfers.component';
 import {ToastModule} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
-import {EBLS, PlatformUser} from '../../models/dcsa-week-demo';
+import {EBLS, nextTransferID, PlatformState, PlatformTransfer} from '../../models/dcsa-week-demo';
 import {RenderDcsaEblComponent} from '../render-dcsa-ebl/render-dcsa-ebl.component';
 import {DialogModule} from 'primeng/dialog';
 import {ButtonModule} from 'primeng/button';
@@ -38,7 +38,6 @@ import {DebounceClickDirective} from '../../directives/debounce-click.directive'
 import {FloatLabelModule} from 'primeng/floatlabel';
 import {InputTextModule} from 'primeng/inputtext';
 import {DropdownModule} from 'primeng/dropdown';
-import {Config} from '../../models/config';
 import shajs from 'sha.js';
 import {v4 as uuidv4} from 'uuid';
 
@@ -54,7 +53,6 @@ import {v4 as uuidv4} from 'uuid';
     '.p-button.dispute-button.p-component:disabled { background: darkgrey }',
     '.button-loading { background: yellow; color: black; }',
     '.button-loading:focus { box-shadow: 0 0 0 0.2rem yellow; }',
-    '.text-center { text-align: center }',
   ],
   standalone: true,
   imports: [
@@ -98,12 +96,6 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
   ebl = EBLS.mscEbl;
 
   @Input()
-  platformUser: PlatformUser = {
-    platform: "",
-    name: ""
-  };
-
-  @Input()
   eblChecksum = "";
 
   @Input()
@@ -112,16 +104,27 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
   @Input()
   ctrRecordTable = new Map<string, ParsedCTRRecord>();
 
+  @Input()
+  platformState: PlatformState = {
+    platform: '',
+    name: '',
+    transferStarted: false,
+    incomingTransfers: [],
+  }
+
+  @Input()
+  platforms: PlatformState[] = []
+
+  @Output()
+  platformStateChange = new EventEmitter<PlatformState>();
+
   @Output()
   ctrRecordCreated = new EventEmitter<ParsedCTRRecord>();
 
-  @Output()
-  platformChange = new EventEmitter<string>();
+  incomingTransfer?: PlatformTransfer;
 
   eblVisible: boolean = false;
-  receiver?: PlatformUser;
-  transferStarted: boolean = false;
-  selectableUsers: PlatformUser[] = [];
+  selectableUsers: PlatformState[] = [];
 
   constructor(private ctrService: CtrService,
               private messageService: MessageService,
@@ -138,19 +141,16 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
   }
 
   private updateFilters(): void {
-    this.selectableUsers = this.config.demoUsers.filter(p => p.platform !== this.platformUser.platform);
-  }
-
-  public get config(): Config {
-    return this.globals.config!;
+    this.selectableUsers = this.platforms.filter(p => p.platform !== this.platformState.platform);
+    this.incomingTransfer = this.platformState.incomingTransfers[0];
   }
 
   public initiateTransfer(): void {
-    const receiver = this.receiver;
+    const receiver = this.platformState.receiver;
     if (!receiver) {
       return;
     }
-    this.transferStarted = true;
+    this.platformState.transferStarted = true;
     const sha256HashFunc = shajs('sha256');
     // We are just making this one up.
     const lastEnvelopeTransferChainEntrySignedContentChecksum = sha256HashFunc.update(uuidv4()).digest('hex');
@@ -158,7 +158,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     const platformRecord: PlatformRecord = {
       eblID: this.eblChecksum,
       action: "INTEND TO TRANSFER",
-      actor: this.platformUser.platform,
+      actor: this.platformState.platform,
       receiver: receiver.platform,
       lastEnvelopeTransferChainEntrySignedContentChecksum: lastEnvelopeTransferChainEntrySignedContentChecksum,
       canonicalRecord: undefined,
@@ -166,7 +166,14 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
       platformActionTimestamp: new Date().getTime(),
       previousRecord: ctrRecords.length > 0 ? ctrRecords[ctrRecords.length - 1].recordID : undefined,
     };
-    this.createRecord(platformRecord);
+    this.platformStateChange.emit(this.platformState);
+    const ctrRecord = this.createRecord(platformRecord);
+    this.transferCreated({
+      transferID: nextTransferID(),
+      fromPlatform: this.platformState,
+      toPlatform: receiver,
+      ctrRecord: ctrRecord,
+    });
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',
@@ -175,77 +182,59 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     });
   }
 
-  private findIntendToTransferRecord(ctrRecords: ParsedCTRRecord[]): ParsedCTRRecord|undefined {
-    for (let idx = ctrRecords.length - 1 ; idx >= 0 ; idx--) {
-      const currentRecord = ctrRecords[idx];
-      if (currentRecord.parsedPlatformRecord.actor !== this.platformUser.platform) {
-        continue;
-      }
-      if (currentRecord.parsedPlatformRecord.receiver === this.receiver?.platform && currentRecord.parsedPlatformRecord.action === "INTEND TO TRANSFER") {
-        return currentRecord;
-      }
-    }
-    return;
-  }
-
-  private createRecord(platformRecord: PlatformRecord): void {
+  private createRecord(platformRecord: PlatformRecord): ParsedCTRRecord {
     const ctrRecords = this.ctrRecords;
     const ctrRecordTable = this.ctrRecordTable;
     const ctrRecord = this.ctrService.generatePlatformRecord(platformRecord, ctrRecords, ctrRecordTable);
     this.ctrRecordCreated.emit(ctrRecord);
+    return ctrRecord;
   }
 
   acceptTransfer(): void {
     const ctrRecords = this.ctrRecords;
-    const receiver = this.receiver;
-    if (receiver === undefined || ctrRecords.length < 1) {
-      return;
-    }
-    const transferRecord = this.findIntendToTransferRecord(ctrRecords);
-    if (!transferRecord) {
+    const transfer = this.incomingTransfer;
+    if (transfer === undefined || ctrRecords.length < 1) {
       return;
     }
     const platformRecord: PlatformRecord = {
       eblID: this.eblChecksum,
       action: "TRANSFER ACCEPTED",
-      actor: receiver.platform,
+      actor: this.platformState.platform,
       receiver: undefined,
       canonicalRecord: undefined,
-      inResponseToRecord: transferRecord.recordID,
+      inResponseToRecord: transfer.ctrRecord.recordID,
       platformActionTimestamp: new Date().getTime(),
       previousRecord: ctrRecords[ctrRecords.length - 1].recordID,
     };
     this.createRecord(platformRecord);
-    this.transferStarted = false;
-    this.receiver = undefined;
+    this.platformStateChange.emit(this.platformState);
+    this.answerTransfer(transfer);
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',
       summary: "Transfer complete",
       detail: 'Transfer accepted and CTR updated with a TRANSFER ACCEPTED'
     });
-    this.platformChange.emit(receiver.platform);
   }
 
   rejectRecord(): void {
     const ctrRecords = this.ctrRecords;
-    if (ctrRecords.length < 1) {
-      return;
-    }
-    const transferRecord = this.findIntendToTransferRecord(ctrRecords);
-    if (!transferRecord) {
+    const transfer = this.incomingTransfer;
+    if (transfer === undefined || ctrRecords.length < 1) {
       return;
     }
     const platformRecord: PlatformRecord = {
       eblID: this.eblChecksum,
       action: "CANCEL TRANSFER",
-      actor: this.platformUser.platform,
+      actor: transfer.fromPlatform.platform,
       receiver: undefined,
       canonicalRecord: undefined,
-      inResponseToRecord: transferRecord.recordID,
+      inResponseToRecord: transfer.ctrRecord.recordID,
       platformActionTimestamp: new Date().getTime(),
       previousRecord: ctrRecords[ctrRecords.length - 1].recordID,
     };
+    this.platformStateChange.emit(this.platformState);
+    this.answerTransfer(transfer);
     this.createRecord(platformRecord);
     this.messageService.add({
       key: 'GenericSuccessToast',
@@ -253,20 +242,18 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
       summary: "Rejected transfer successful",
       detail: 'Transfer rejected.'
     });
-    this.transferStarted = false;
-    this.receiver = undefined;
   }
 
   disputeRecord(): void {
     const ctrRecords = this.ctrRecords;
-    const receiver = this.receiver;
-    if (!receiver || ctrRecords.length < 1) {
+    const transfer = this.incomingTransfer;
+    if (transfer === undefined || ctrRecords.length < 1) {
       return;
     }
     const platformRecord: PlatformRecord = {
       eblID: this.eblChecksum,
       action: "DISPUTE RECORD",
-      actor: receiver.platform,
+      actor: this.platformState.platform,
       receiver: undefined,
       canonicalRecord: undefined,
       inResponseToRecord: ctrRecords[ctrRecords.length - 1].recordID,
@@ -274,13 +261,26 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
       previousRecord: ctrRecords[ctrRecords.length - 1].recordID,
     };
     this.createRecord(platformRecord);
-    this.transferStarted = false;
-    this.receiver = undefined;
+    this.platformStateChange.emit(this.platformState);
+    this.answerTransfer(transfer);
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',
       summary: "The eBL state successfully disputed",
       detail: 'Transfer rejected and CTR updated with a DISPUTE RECORD'
     });
+  }
+
+  answerTransfer(transfer: PlatformTransfer): void {
+    const fromPlatform = transfer.fromPlatform
+    const toPlatform = transfer.toPlatform
+    toPlatform.incomingTransfers = toPlatform.incomingTransfers.filter(p => p.transferID !== transfer.transferID);
+    this.incomingTransfer = this.platformState.incomingTransfers[0];
+    fromPlatform.transferStarted = false;
+    fromPlatform.receiver = undefined;
+  }
+
+  transferCreated(transfer: PlatformTransfer): void {
+    transfer.toPlatform.incomingTransfers.push(transfer)
   }
 }

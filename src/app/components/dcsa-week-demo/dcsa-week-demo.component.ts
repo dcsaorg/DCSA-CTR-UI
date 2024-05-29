@@ -28,7 +28,7 @@ import {TableModule} from 'primeng/table';
 import {AccordionModule} from 'primeng/accordion';
 import {RenderPintTransfersComponent} from '../render-pint-transfers/render-pint-transfers.component';
 import {ToastModule} from 'primeng/toast';
-import {EBLS, PlatformUser} from '../../models/dcsa-week-demo';
+import {EBLS, PlatformState, PlatformTransfer} from '../../models/dcsa-week-demo';
 import {RenderDcsaEblComponent} from '../render-dcsa-ebl/render-dcsa-ebl.component';
 import {DialogModule} from 'primeng/dialog';
 import {ButtonModule} from 'primeng/button';
@@ -40,6 +40,7 @@ import {Config} from '../../models/config';
 import canonicalize from 'canonicalize';
 import shajs from 'sha.js';
 import {DcsaWeekDemoPlatformComponent} from '../dcsa-week-demo-platform/dcsa-week-demo-platform.component';
+import {PanelModule} from 'primeng/panel';
 
 @Component({
   selector: 'app-dcsa-week-demo',
@@ -89,7 +90,8 @@ import {DcsaWeekDemoPlatformComponent} from '../dcsa-week-demo-platform/dcsa-wee
     FloatLabelModule,
     InputTextModule,
     DropdownModule,
-    DcsaWeekDemoPlatformComponent
+    DcsaWeekDemoPlatformComponent,
+    PanelModule
   ]
 })
 export class DcsaWeekDemoComponent {
@@ -111,18 +113,27 @@ export class DcsaWeekDemoComponent {
   ctrRecords: ParsedCTRRecord[] = [];
   ctrRecordTable = new Map<string, ParsedCTRRecord>();
   activeIndex: number = 0;
+  platforms: PlatformState[] = []
+  platformStateTable: Map<string, PlatformState> = new Map<string, PlatformState>();
 
   constructor(private globals: Globals,
               ) {
+    this.platforms = this.config.demoUsers.map(u => {
+      return {
+        platform: u.platform,
+        name: u.name,
+        transferStarted: false,
+        incomingTransfers: [],
+      }
+    })
+    for (let platform of this.platforms) {
+      this.platformStateTable.set(platform.platform, platform);
+    }
   }
 
 
   public get config(): Config {
     return this.globals.config!;
-  }
-
-  public get demoUsers(): PlatformUser[] {
-    return this.config.demoUsers;
   }
 
   newCtrRecord(ctrRecord: ParsedCTRRecord): void {
@@ -135,7 +146,7 @@ export class DcsaWeekDemoComponent {
   }
 
   switchPlatform(selectedPlatform: string): void {
-    const index = this.demoUsers.findIndex(p => p.platform === selectedPlatform);
+    const index = this.platforms.findIndex(p => p.platform === selectedPlatform);
     if (index < 0) {
       return;
     }

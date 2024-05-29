@@ -1,3 +1,5 @@
+import {ParsedCTRRecord} from './records';
+
 export interface ConsignmentItem {
 
 }
@@ -151,3 +153,24 @@ export const EBLS = {
     ]
   } as EBL,
 } as const;
+
+let _transferCounts: number = 0;
+
+export function nextTransferID() {
+  return ++_transferCounts;
+}
+
+export interface PlatformTransfer {
+  transferID: number;
+  fromPlatform: PlatformState;
+  toPlatform: PlatformState;
+  ctrRecord: ParsedCTRRecord;
+}
+
+export interface PlatformState {
+  platform: string;
+  name: string;
+  receiver?: PlatformState;
+  transferStarted: boolean;
+  incomingTransfers: PlatformTransfer[];
+}

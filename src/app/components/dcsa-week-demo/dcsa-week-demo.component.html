@@ -1,20 +1,48 @@
-<p-tabView [(activeIndex)]="activeIndex">
-  <ng-container *ngFor="let platformUser of demoUsers">
-    <p-tabPanel header="{{platformUser.platform}}">
-      <app-dcsa-week-demo-platform [platformUser]="platformUser"
-                                   [ebl]="ebl()"
-                                   [eblChecksum]="eblChecksum()"
-                                   (ctrRecordCreated)="newCtrRecord($event)"
-                                   (platformChange)="switchPlatform($event)"
-                                   [ctrRecords]="ctrRecords"
-                                   [ctrRecordTable]="ctrRecordTable">
-      </app-dcsa-week-demo-platform>
-    </p-tabPanel>
-  </ng-container>
-</p-tabView>
+<div class="flex justify-content-end gap-2">
+  <span class="font-bold">Current Platform</span>
+  <p-dropdown [ngModel]="platforms[activeIndex]"
+              (ngModelChange)="switchPlatform($event.platform)"
+              id="receiver"
+              name="receiver"
+              placeholder="Receiver"
+              [ngModelOptions]="{standalone: true}"
+              [filter]="true"
+              [showClear]="false"
+              [required]="true"
+              optionLabel="platform"
+              [options]="platforms">
+  </p-dropdown>
+</div>
 
-<hr>
-<h1>CTR</h1>
-<app-ctr-record-table [ctrRecords]="ctrRecords"
-                      [dcsaDemo]="true">
-</app-ctr-record-table>
+<p-panel>
+  <ng-template pTemplate="header">
+    <div class="flex align-items-center gap-2">
+      <span class="font-bold">PINT</span>
+    </div>
+  </ng-template>
+  <p-tabView [(activeIndex)]="activeIndex">
+    <ng-container *ngFor="let platform of platforms">
+      <p-tabPanel header="{{platform.platform}}">
+        <app-dcsa-week-demo-platform [platformState]="platform"
+                                     [platforms]="platforms"
+                                     [ebl]="ebl()"
+                                     [eblChecksum]="eblChecksum()"
+                                     (ctrRecordCreated)="newCtrRecord($event)"
+                                     [ctrRecords]="ctrRecords"
+                                     [ctrRecordTable]="ctrRecordTable">
+        </app-dcsa-week-demo-platform>
+      </p-tabPanel>
+    </ng-container>
+  </p-tabView>
+
+</p-panel>
+<p-panel>
+  <ng-template pTemplate="header">
+    <div class="flex align-items-center gap-2">
+      <span class="font-bold">CTR</span>
+    </div>
+  </ng-template>
+  <app-ctr-record-table [ctrRecords]="ctrRecords"
+                        [dcsaDemo]="true">
+  </app-ctr-record-table>
+</p-panel>

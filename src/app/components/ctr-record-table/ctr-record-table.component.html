@@ -1,12 +1,12 @@
 <p-table [columns]="columns"
-         [value]="ctrRecords"
+         [value]="rows"
          [autoLayout]="true"
          [loading]="loading"
          [rowTrackBy]="trackByFunction"
          [metaKeySelection]="true"
          responsiveLayout="scroll">
   <ng-template pTemplate="caption">
-    Records for EBL
+    Records for EBL (latest record first)
   </ng-template>
   <ng-template pTemplate="header" let-columnsUntyped>
     <tr *ngIf="asColumns(columnsUntyped) as columns">

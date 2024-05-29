@@ -14,15 +14,15 @@
   "demoUsers": [
     {
       "platform": "BOLE",
-      "name": "Shipper"
+      "name": "Carrier"
     },
     {
       "platform": "CARX",
-      "name": "Consignee"
+      "name": "Shipper"
     },
     {
       "platform": "EDOX",
-      "name": "Carrier"
+      "name": "Consignee"
     },
     {
       "platform": "ESSD",

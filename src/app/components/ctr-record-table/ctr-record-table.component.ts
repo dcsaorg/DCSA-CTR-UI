@@ -14,6 +14,7 @@ import {isValidEBLID, ParsedCTRRecord} from '../../models/records';
 import {CreateCtrRecordComponent} from '../create-ctr-record/create-ctr-record.component';
 import {TableModule} from 'primeng/table';
 import {Column} from '../../models/table-models';
+import {ToolbarModule} from 'primeng/toolbar';
 
 interface CtrColumn<T> extends Column<T> {
   dcsaWeekDemoField: boolean
@@ -44,7 +45,8 @@ interface CtrColumn<T> extends Column<T> {
     NgSwitch,
     NgSwitchDefault,
     NgSwitchCase,
-    SlicePipe
+    SlicePipe,
+    ToolbarModule
   ]
 })
 export class CtrRecordTableComponent implements OnInit, OnChanges {
@@ -68,10 +70,10 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
 
   allColumns: CtrColumn<ParsedCTRRecord>[] = [
     {
-      title: "Record ID",
-      contentType: "platformRecordID",
+      title: "EBL ID",
+      contentType: "checksum",
       dcsaWeekDemoField: true,
-      value: (r) => r.recordID,
+      value: (r) => r.parsedPlatformRecord.eblID,
     },
     {
       title: "Actor",
@@ -94,7 +96,7 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
     {
       title: "Platform timestamp (perform time)",
       contentType: "string",
-      dcsaWeekDemoField: false,
+      dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.platformActionTimestamp.toISOString(),
     },
     {
@@ -114,6 +116,12 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
       contentType: "platformRecordID",
       dcsaWeekDemoField: true,
       value: (r) => r.parsedPlatformRecord.canonicalRecord?.recordID ?? null,
+    },
+    {
+      title: "Record ID",
+      contentType: "platformRecordID",
+      dcsaWeekDemoField: true,
+      value: (r) => r.recordID,
     },
     {
       title: "Previous Record",
@@ -136,6 +144,7 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
   ]
 
   columns = this.allColumns;
+  rows: ParsedCTRRecord[] = [];
 
   constructor() {
   }
@@ -151,6 +160,7 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
     } else {
       this.columns = this.allColumns
     }
+    this.rows = [... this.ctrRecords].reverse();
   }
 
   ngOnInit(): void {
