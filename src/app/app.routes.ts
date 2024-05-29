@@ -7,8 +7,10 @@ import {DcsaWeekDemoComponent} from './components/dcsa-week-demo/dcsa-week-demo.
 const guards: any[] = [];
 
 export const routes: Routes = [
-  {path: '', pathMatch: 'full', component: StartPageComponent},
+  // {path: '', pathMatch: 'full', component: StartPageComponent},
+  {path: '', pathMatch: 'full', component: DcsaWeekDemoComponent},
+  {path: 'start', component: StartPageComponent},
+  {path: 'dcsa-week-ctr-demo', component: DcsaWeekDemoComponent},
   {path: 'records/:eblID', component: RenderCtrRecordsPageComponent},
   {path: 'transaction-game/:eblID', component: TransactionGamePageComponent},
-  {path: 'dcsa-week-ctr-demo', component: DcsaWeekDemoComponent},
 ];

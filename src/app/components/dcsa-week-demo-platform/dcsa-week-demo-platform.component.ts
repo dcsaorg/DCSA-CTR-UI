@@ -54,6 +54,7 @@ import {ProgressBarModule} from 'primeng/progressbar';
     '.p-button.dispute-button.p-component:disabled { background: darkgrey }',
     '.button-loading { background: yellow; color: black; }',
     '.button-loading:focus { box-shadow: 0 0 0 0.2rem yellow; }',
+    '.dropdown-80p-width { width: 80% !important; min-width: 80% !important; overflow: visible}',
   ],
   standalone: true,
   imports: [
