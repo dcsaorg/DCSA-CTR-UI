@@ -1,6 +1,6 @@
 <div class="flex justify-content-end gap-2">
   <span class="font-bold">Current Platform</span>
-  <p-dropdown [ngModel]="platforms[activeIndex]"
+  <p-dropdown [(ngModel)]="currentPlatform"
               (ngModelChange)="switchPlatform($event.platform)"
               id="receiver"
               name="receiver"
@@ -17,29 +17,23 @@
 <p-panel>
   <ng-template pTemplate="header">
     <div class="flex align-items-center gap-2">
-      <span class="font-bold">PINT</span>
+      <span class="font-bold text-center">PINT</span>
     </div>
   </ng-template>
-  <p-tabView [(activeIndex)]="activeIndex">
-    <ng-container *ngFor="let platform of platforms">
-      <p-tabPanel header="{{platform.platform}}">
-        <app-dcsa-week-demo-platform [platformState]="platform"
-                                     [platforms]="platforms"
-                                     [ebl]="ebl()"
-                                     [eblChecksum]="eblChecksum()"
-                                     (ctrRecordCreated)="newCtrRecord($event)"
-                                     [ctrRecords]="ctrRecords"
-                                     [ctrRecordTable]="ctrRecordTable">
-        </app-dcsa-week-demo-platform>
-      </p-tabPanel>
-    </ng-container>
-  </p-tabView>
+  <app-dcsa-week-demo-platform [platformState]="currentPlatform"
+                               [platforms]="platforms"
+                               [ebl]="ebl()"
+                               [eblChecksum]="eblChecksum()"
+                               (ctrRecordCreated)="newCtrRecord($event)"
+                               [ctrRecords]="ctrRecords"
+                               [ctrRecordTable]="ctrRecordTable">
+  </app-dcsa-week-demo-platform>
 
 </p-panel>
 <p-panel>
   <ng-template pTemplate="header">
     <div class="flex align-items-center gap-2">
-      <span class="font-bold">CTR</span>
+      <span class="font-bold text-center">CTR</span>
     </div>
   </ng-template>
   <app-ctr-record-table [ctrRecords]="ctrRecords"

@@ -40,6 +40,7 @@ import {InputTextModule} from 'primeng/inputtext';
 import {DropdownModule} from 'primeng/dropdown';
 import shajs from 'sha.js';
 import {v4 as uuidv4} from 'uuid';
+import {ProgressBarModule} from 'primeng/progressbar';
 
 @Component({
   selector: 'app-dcsa-week-demo-platform',
@@ -87,7 +88,8 @@ import {v4 as uuidv4} from 'uuid';
     DebounceClickDirective,
     FloatLabelModule,
     InputTextModule,
-    DropdownModule
+    DropdownModule,
+    ProgressBarModule
   ]
 })
 export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {

@@ -1,26 +1,29 @@
 <div class="grid">
   <div class="col-6">
     <p-card [style]='{ borderRadius: "25px", height: "100%" }'>
-      <h1 class="text-center">{{platformState.name}} ({{platformState.platform}})</h1>
-      <div class="flex justify-content-center">
-        <button label="Show EBL"
-                (click)="eblVisible = true"
-                pButton
-                appDebounceClick
-                icon="pi pi-book"
-                class="p-button-secondary">
-        </button>
+      <div class="row">
+        <div class="col-6 font-bold">Send eBL</div>
+
+        <div class="col-6 align-content-end justify-content-end">
+          <button label="Show EBL"
+                  (click)="eblVisible = true"
+                  pButton
+                  appDebounceClick
+                  icon="pi pi-book"
+                  class="p-button-secondary">
+          </button>
+        </div>
       </div>
 
       <br>
 
-      <div class="flex justify-content-center">
-        <div style="display: flex; justify-content: center !important; align-items: center !important">
+      <div class="grid justify-content-evenly">
           <p-dropdown [(ngModel)]="platformState.receiver"
                       #receiverModel="ngModel"
                       id="receiver"
                       name="receiver"
                       placeholder="Receiver"
+                      [style]="{'width':'80% !important','min-width':'80% !important', overflow: 'visible'}"
                       [ngModelOptions]="{standalone: true}"
                       [filter]="true"
                       [showClear]="true"
@@ -34,17 +37,32 @@
               {{item.name}} ({{item.platform}})
             </ng-template>
           </p-dropdown>
-        </div>
-        <div>&nbsp;</div>
-        <button label="{{!platformState.transferStarted ? 'Transfer' : ''}}"
+      </div>
+      <br>
+      <div *ngIf="!platformState.transferStarted" class="flex justify-content-evenly">
+        <button label="Transfer"
                 pButton
                 appDebounceClick
+                [style]="{width: '80%'}"
                 [class.p-button-rounded]="platformState.transferStarted"
                 [disabled]="!receiverModel.valid"
                 [loading]="platformState.transferStarted"
                 (debounceClick)="initiateTransfer()"
                 icon="pi pi-send">
         </button>
+      </div>
+      <div *ngIf="platformState.transferStarted" class="grid">
+        <div class="row">
+          <button pButton
+                  [class.p-button-rounded]="platformState.transferStarted"
+                  [loading]="true"
+                  icon="pi pi-spinner">
+          </button>
+          <span>Transfer in progress</span>
+        </div>
+        <div class="row">
+          <p-progressBar [value]="50"></p-progressBar>
+        </div>
       </div>
 
     </p-card>
@@ -53,7 +71,7 @@
   <div class="col-6">
     <ng-template #noTransfer>
       <p-card [style]='{ borderRadius: "25px", height: "100%" }'>
-        <h1 class="text-center">No incoming eBL transfer</h1>
+        <h1 class="text-center">No incoming eBL</h1>
         <div class="flex justify-content-center">
           <button label="Show EBL"
                   (click)="eblVisible = true"

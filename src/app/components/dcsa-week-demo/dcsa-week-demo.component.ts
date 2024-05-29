@@ -113,6 +113,7 @@ export class DcsaWeekDemoComponent {
   ctrRecords: ParsedCTRRecord[] = [];
   ctrRecordTable = new Map<string, ParsedCTRRecord>();
   activeIndex: number = 0;
+  currentPlatform: PlatformState;
   platforms: PlatformState[] = []
   platformStateTable: Map<string, PlatformState> = new Map<string, PlatformState>();
 
@@ -129,6 +130,7 @@ export class DcsaWeekDemoComponent {
     for (let platform of this.platforms) {
       this.platformStateTable.set(platform.platform, platform);
     }
+    this.currentPlatform = this.platforms[0];
   }
 
 
