@@ -2,14 +2,17 @@
   <div class="col-6">
     <p-card [style]='{ borderRadius: "25px", height: "100%" }'>
       <div class="grid">
-        <div class="col-10 font-bold" style="font-size: 2rem">Send eBL</div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-9 font-bold" style="font-size: 2rem">Send eBL</div>
 
         <div class="col-2 align-content-end justify-content-end">
           <button (click)="eblVisible = true"
+                  label="eBL"
+                  iconPos="right"
                   pButton
                   appDebounceClick
-                  icon="pi pi-book"
-                  class="p-button-secondary">
+                  icon="pi pi-eye"
+                  class="p-button-rounded show-ebl-button">
           </button>
         </div>
       </div>
@@ -111,15 +114,17 @@
     <ng-template #noTransfer>
       <p-card [style]='{ borderRadius: "25px", height: "100%", opacity: 0.3 }'>
         <div class="grid">
-          <div class="col-10 font-bold" style="font-size: 2rem">No incoming eBL</div>
-
+          <div class="col-1">&nbsp;</div>
+          <div class="col-9 font-bold" style="font-size: 2rem">No incoming eBL</div>
           <div class="col-2 align-content-end justify-content-end">
             <button (click)="eblVisible = true"
+                    label="eBL"
+                    iconPos="right"
                     [disabled]="true"
                     pButton
                     appDebounceClick
-                    icon="pi pi-book"
-                    class="p-button-secondary">
+                    icon="pi pi-eye"
+                    class="p-button-rounded show-ebl-button">
             </button>
           </div>
         </div>
@@ -157,14 +162,17 @@
     </ng-template>
     <p-card *ngIf="incomingTransfer as transfer; else noTransfer" [style]='{ borderRadius: "25px", height: "100%" }'>
       <div class="grid">
-        <div class="col-10 font-bold" style="font-size: 2rem">Receiving eBL (<abbr title="{{eblChecksum}}">{{eblChecksum | slice:0:7}}</abbr>) from {{transfer.fromPlatform.platform}}</div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-9 font-bold" style="font-size: 2rem">Receiving eBL (<abbr title="{{eblChecksum}}">{{eblChecksum | slice:0:7}}</abbr>) from {{transfer.fromPlatform.platform}}</div>
 
         <div class="col-2 align-content-end justify-content-end">
           <button (click)="eblVisible = true"
+                  label="eBL"
+                  iconPos="right"
                   pButton
                   appDebounceClick
-                  icon="pi pi-book"
-                  class="p-button-secondary">
+                  icon="pi pi-eye"
+                  class="p-button-rounded show-ebl-button">
           </button>
         </div>
       </div>
