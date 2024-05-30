@@ -43,8 +43,8 @@
         <button label="Transfer"
                 pButton
                 appDebounceClick
+                class="p-button-rounded"
                 [style]="{width: '80%'}"
-                [class.p-button-rounded]="platformState.hasTransferStarted"
                 [disabled]="!receiverModel.valid"
                 [loading]="platformState.hasTransferStarted"
                 (debounceClick)="initiateTransfer()"
@@ -109,12 +109,13 @@
 
   <div class="col-6">
     <ng-template #noTransfer>
-      <p-card [style]='{ borderRadius: "25px", height: "100%" }'>
+      <p-card [style]='{ borderRadius: "25px", height: "100%", opacity: 0.3 }'>
         <div class="grid">
           <div class="col-10 font-bold" style="font-size: 2rem">No incoming eBL</div>
 
           <div class="col-2 align-content-end justify-content-end">
             <button (click)="eblVisible = true"
+                    [disabled]="true"
                     pButton
                     appDebounceClick
                     icon="pi pi-book"
@@ -128,7 +129,7 @@
           <button label="Accept"
                   pButton
                   appDebounceClick
-                  class="accept-button"
+                  class="p-button-rounded accept-button"
                   [disabled]="true"
                   (debounceClick)="acceptTransfer()"
                   icon="pi pi-check">
@@ -137,7 +138,7 @@
           <button label="Reject"
                   pButton
                   appDebounceClick
-                  class="reject-button"
+                  class="p-button-rounded reject-button"
                   [disabled]="true"
                   (debounceClick)="rejectRecord()"
                   icon="pi pi-times">
@@ -146,7 +147,7 @@
           <button label="Dispute"
                   pButton
                   appDebounceClick
-                  class="dispute-button"
+                  class="p-button-rounded dispute-button"
                   [disabled]="true"
                   (debounceClick)="disputeRecord()"
                   icon="pi pi-exclamation-triangle">
@@ -173,7 +174,7 @@
         <button label="Accept"
                 pButton
                 appDebounceClick
-                class="accept-button"
+                class="p-button-rounded accept-button"
                 (debounceClick)="acceptTransfer()"
                 icon="pi pi-check">
         </button>
@@ -181,7 +182,7 @@
         <button label="Reject"
                 pButton
                 appDebounceClick
-                class="reject-button"
+                class="p-button-rounded reject-button"
                 (debounceClick)="rejectRecord()"
                 icon="pi pi-times">
         </button>
@@ -189,7 +190,7 @@
         <button label="Dispute"
                 pButton
                 appDebounceClick
-                class="dispute-button"
+                class="p-button-rounded dispute-button"
                 (debounceClick)="disputeRecord()"
                 icon="pi pi-exclamation-triangle">
         </button>
