@@ -1,16 +1,16 @@
 <div class="grid header">
   <div class="col-1">
-    <img class="header__logo" src="assets/DCSA_logo_color_on_dark_background.png">
+    <img class="header__logo" alt="DCSA Logo" src="assets/DCSA_logo_color_on_dark_background.png">
   </div>
   <div class="col-9">&nbsp;</div>
   <div class="col-2 header__menuLabel header__company_container">
     <div class="flex justify-content-end gap-2">
       <span class="header__company">Current Platform</span>
       <p-dropdown [(ngModel)]="platform"
-                  (ngModelChange)="switchPlatform($event.platform)"
-                  id="receiver"
-                  name="receiver"
-                  placeholder="Receiver"
+                  (ngModelChange)="switchPlatform($event)"
+                  id="platform"
+                  name="platform"
+                  placeholder="Platform"
                   [ngModelOptions]="{standalone: true}"
                   [filter]="true"
                   [showClear]="false"
