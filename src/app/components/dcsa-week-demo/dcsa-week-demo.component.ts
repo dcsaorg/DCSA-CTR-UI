@@ -28,7 +28,7 @@ import {TableModule} from 'primeng/table';
 import {AccordionModule} from 'primeng/accordion';
 import {RenderPintTransfersComponent} from '../render-pint-transfers/render-pint-transfers.component';
 import {ToastModule} from 'primeng/toast';
-import {EBLS, PlatformState, PlatformTransfer} from '../../models/dcsa-week-demo';
+import {EBLS, PlatformState} from '../../models/dcsa-week-demo';
 import {RenderDcsaEblComponent} from '../render-dcsa-ebl/render-dcsa-ebl.component';
 import {DialogModule} from 'primeng/dialog';
 import {ButtonModule} from 'primeng/button';
@@ -41,6 +41,7 @@ import canonicalize from 'canonicalize';
 import shajs from 'sha.js';
 import {DcsaWeekDemoPlatformComponent} from '../dcsa-week-demo-platform/dcsa-week-demo-platform.component';
 import {PanelModule} from 'primeng/panel';
+import {DemoHeaderComponent} from '../header/demo-header.component';
 
 @Component({
   selector: 'app-dcsa-week-demo',
@@ -52,7 +53,7 @@ import {PanelModule} from 'primeng/panel';
     '.p-button.reject-button.p-component:disabled { background: darkgrey; color: #F8F7F7; }',
     '.p-button.dispute-button { background: red }',
     '.p-button.dispute-button.p-component:disabled { background: darkgrey }',
-     '.button-loading { background: yellow; color: black; }',
+    '.button-loading { background: yellow; color: black; }',
     '.button-loading:focus { box-shadow: 0 0 0 0.2rem yellow; }',
     //
   ],
@@ -91,7 +92,8 @@ import {PanelModule} from 'primeng/panel';
     InputTextModule,
     DropdownModule,
     DcsaWeekDemoPlatformComponent,
-    PanelModule
+    PanelModule,
+    DemoHeaderComponent
   ]
 })
 export class DcsaWeekDemoComponent {
@@ -112,20 +114,15 @@ export class DcsaWeekDemoComponent {
   })
   ctrRecords: ParsedCTRRecord[] = [];
   ctrRecordTable = new Map<string, ParsedCTRRecord>();
-  activeIndex: number = 0;
   currentPlatform: PlatformState;
   platforms: PlatformState[] = []
   platformStateTable: Map<string, PlatformState> = new Map<string, PlatformState>();
+  exportMode = false;
 
   constructor(private globals: Globals,
               ) {
     this.platforms = this.config.demoUsers.map(u => {
-      return {
-        platform: u.platform,
-        name: u.name,
-        transferStarted: false,
-        incomingTransfers: [],
-      }
+      return new PlatformState(u.platform, u.name);
     })
     for (let platform of this.platforms) {
       this.platformStateTable.set(platform.platform, platform);
@@ -141,17 +138,9 @@ export class DcsaWeekDemoComponent {
   newCtrRecord(ctrRecord: ParsedCTRRecord): void {
     const ctrRecordTable = this.ctrRecordTable;
     // Copy to force update in the UI (template)
-    const ctrRecords =  [... this.ctrRecords];
+    const ctrRecords = [... this.ctrRecords];
     ctrRecordTable.set(ctrRecord.recordID, ctrRecord);
     ctrRecords.push(ctrRecord)
     this.ctrRecords = ctrRecords;
-  }
-
-  switchPlatform(selectedPlatform: string): void {
-    const index = this.platforms.findIndex(p => p.platform === selectedPlatform);
-    if (index < 0) {
-      return;
-    }
-    this.activeIndex = index;
   }
 }

@@ -76,6 +76,18 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
       value: (r) => r.parsedPlatformRecord.eblID,
     },
     {
+      title: "Record ID",
+      contentType: "platformRecordID",
+      dcsaWeekDemoField: true,
+      value: (r) => r.recordID,
+    },
+    {
+      title: "Previous Record",
+      contentType: "platformRecordID",
+      dcsaWeekDemoField: true,
+      value: (r) => r.parsedPlatformRecord.previousRecord?.recordID ?? null,
+    },
+    {
       title: "Actor",
       contentType: "string",
       dcsaWeekDemoField: true,
@@ -91,7 +103,7 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
       title: "Receiver",
       contentType: "string",
       dcsaWeekDemoField: true,
-      value: (r) => r.parsedPlatformRecord.receiver ?? '(No receiver provided)',
+      value: (r) => r.parsedPlatformRecord.receiver ?? '-',
     },
     {
       title: "Platform timestamp (perform time)",
@@ -114,20 +126,8 @@ export class CtrRecordTableComponent implements OnInit, OnChanges {
     {
       title: "Canonical Record",
       contentType: "platformRecordID",
-      dcsaWeekDemoField: true,
+      dcsaWeekDemoField: false,
       value: (r) => r.parsedPlatformRecord.canonicalRecord?.recordID ?? null,
-    },
-    {
-      title: "Record ID",
-      contentType: "platformRecordID",
-      dcsaWeekDemoField: true,
-      value: (r) => r.recordID,
-    },
-    {
-      title: "Previous Record",
-      contentType: "platformRecordID",
-      dcsaWeekDemoField: true,
-      value: (r) => r.parsedPlatformRecord.previousRecord?.recordID ?? null,
     },
     {
       title: "CTR timestamp (insert time)",

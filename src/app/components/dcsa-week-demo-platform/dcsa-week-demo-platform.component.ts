@@ -46,15 +46,19 @@ import {ProgressBarModule} from 'primeng/progressbar';
   selector: 'app-dcsa-week-demo-platform',
   templateUrl: './dcsa-week-demo-platform.component.html',
   styles: [
-    '.p-button.accept-button { background: green }',
-    '.p-button.accept-button.p-component:disabled { background: darkgrey }',
-    '.p-button.reject-button { background: yellow; color: black }',
-    '.p-button.reject-button.p-component:disabled { background: darkgrey; color: #F8F7F7; }',
-    '.p-button.dispute-button { background: red }',
-    '.p-button.dispute-button.p-component:disabled { background: darkgrey }',
+    '.p-button.accept-button { background: green; border-color: green }',
+    '.p-button.accept-button.p-component:disabled { background: darkgrey; border-color: darkgrey }',
+    '.p-button.reject-button { background: yellow; border-color: yellow; color: black }',
+    '.p-button.reject-button.p-component:disabled { background: darkgrey; border-color: darkgrey; color: #F8F7F7; }',
+    '.p-button.dispute-button { background: red; border-color: red; }',
+    '.p-button.dispute-button.p-component:disabled { background: darkgrey; border-color: darkgrey  }',
     '.button-loading { background: yellow; color: black; }',
     '.button-loading:focus { box-shadow: 0 0 0 0.2rem yellow; }',
     '.dropdown-80p-width { width: 80% !important; min-width: 80% !important; overflow: visible}',
+    '.transfer-in-progress { background-color: #F2BD00; border-color: #F2BD00; }',
+    '.transfer-accepted { background-color: #00811C; border-color: #00811C; }',
+    '.transfer-rejected { background-color: #E90000; border-color: #E90000; }',
+    '.transfer-disputed { background-color: #E90000; border-color: #E90000; }',
   ],
   standalone: true,
   imports: [
@@ -108,12 +112,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
   ctrRecordTable = new Map<string, ParsedCTRRecord>();
 
   @Input()
-  platformState: PlatformState = {
-    platform: '',
-    name: '',
-    transferStarted: false,
-    incomingTransfers: [],
-  }
+  platformState: PlatformState = new PlatformState('', '');
 
   @Input()
   platforms: PlatformState[] = []
@@ -153,7 +152,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     if (!receiver) {
       return;
     }
-    this.platformState.transferStarted = true;
+    this.platformState.transferState = "STARTED";
     const sha256HashFunc = shajs('sha256');
     // We are just making this one up.
     const lastEnvelopeTransferChainEntrySignedContentChecksum = sha256HashFunc.update(uuidv4()).digest('hex');
@@ -211,7 +210,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     };
     this.createRecord(platformRecord);
     this.platformStateChange.emit(this.platformState);
-    this.answerTransfer(transfer);
+    this.answerTransfer(transfer, "ACCEPTED");
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',
@@ -237,7 +236,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
       previousRecord: ctrRecords[ctrRecords.length - 1].recordID,
     };
     this.platformStateChange.emit(this.platformState);
-    this.answerTransfer(transfer);
+    this.answerTransfer(transfer, "REJECTED");
     this.createRecord(platformRecord);
     this.messageService.add({
       key: 'GenericSuccessToast',
@@ -265,7 +264,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     };
     this.createRecord(platformRecord);
     this.platformStateChange.emit(this.platformState);
-    this.answerTransfer(transfer);
+    this.answerTransfer(transfer, "DISPUTED");
     this.messageService.add({
       key: 'GenericSuccessToast',
       severity: 'success',
@@ -274,16 +273,40 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     });
   }
 
-  answerTransfer(transfer: PlatformTransfer): void {
+  answerTransfer(transfer: PlatformTransfer, answer: "ACCEPTED" | "REJECTED" | "DISPUTED"): void {
     const fromPlatform = transfer.fromPlatform
     const toPlatform = transfer.toPlatform
     toPlatform.incomingTransfers = toPlatform.incomingTransfers.filter(p => p.transferID !== transfer.transferID);
     this.incomingTransfer = this.platformState.incomingTransfers[0];
-    fromPlatform.transferStarted = false;
+    fromPlatform.transferState = answer;
     fromPlatform.receiver = undefined;
   }
 
   transferCreated(transfer: PlatformTransfer): void {
     transfer.toPlatform.incomingTransfers.push(transfer)
   }
+
+  get transferIcon(): string {
+    const state = this.platformState.transferState;
+
+    console.log(state);
+    switch (state) {
+      case 'ACCEPTED': return "pi-check";
+      case 'REJECTED': return "pi-times";
+      case 'DISPUTED': return "pi-times";
+      default: return "pi-spinner"
+    }
+  }
+
+  get transferProgressBarColor(): string {
+    const state = this.platformState.transferState;
+
+    switch (state) {
+      case 'ACCEPTED': return "#00811C";
+      case 'REJECTED': return "#E90000";
+      case 'DISPUTED': return "#E90000";
+      default: return "#F2BD00"
+    }
+  }
 }
+

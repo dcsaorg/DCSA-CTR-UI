@@ -1486,6 +1486,10 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
   font-size: 0.875rem;
   padding: 0.4375rem 0.65625rem;
 }
+.p-button.p-button-sm.p-button-icon-only.p-button-rounded {
+  height: 1.7rem;
+  width: 1.7rem;
+}
 .p-button.p-button-sm .p-button-icon {
   font-size: 0.875rem;
 }

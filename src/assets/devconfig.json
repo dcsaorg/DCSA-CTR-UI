@@ -3,9 +3,9 @@
     "BOLE",
     "CARX",
     "EDOX",
+    "ENIG",
     "ESSD",
     "ETEU",
-    "IDT",
     "IQAX",
     "SECR",
     "TRGO",
@@ -33,24 +33,20 @@
       "name": "Bank of B"
     },
     {
-      "platform": "IDT",
+      "platform": "IQAX",
       "name": "Bank of C"
     },
     {
-      "platform": "IQAX",
+      "platform": "ENIG",
       "name": "Bank of D"
     },
     {
-      "platform": "IQAX",
+      "platform": "SECR",
       "name": "Bank of E"
     },
     {
-      "platform": "SECR",
-      "name": "Bank of F"
-    },
-    {
       "platform": "TRGO",
-      "name": "Bank of G"
+      "name": "Bank of F"
     },
     {
       "platform": "WAVE",

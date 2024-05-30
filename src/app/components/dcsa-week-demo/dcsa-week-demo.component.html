@@ -1,18 +1,6 @@
-<div class="flex justify-content-end gap-2">
-  <span class="font-bold">Current Platform</span>
-  <p-dropdown [(ngModel)]="currentPlatform"
-              (ngModelChange)="switchPlatform($event.platform)"
-              id="receiver"
-              name="receiver"
-              placeholder="Receiver"
-              [ngModelOptions]="{standalone: true}"
-              [filter]="true"
-              [showClear]="false"
-              [required]="true"
-              optionLabel="platform"
-              [options]="platforms">
-  </p-dropdown>
-</div>
+<app-demo-header [platforms]="platforms"
+                 [(platform)]="currentPlatform">
+</app-demo-header>
 
 <p-panel>
   <ng-template pTemplate="header">
@@ -37,6 +25,13 @@
     </div>
   </ng-template>
   <app-ctr-record-table [ctrRecords]="ctrRecords"
-                        [dcsaDemo]="true">
+                        [dcsaDemo]="!exportMode">
   </app-ctr-record-table>
+
+  <br>
+  <div class="grid">
+    <label for="switch">Show all fields</label><span>&nbsp;</span>
+    <p-inputSwitch id="switch" [(ngModel)]="exportMode">
+    </p-inputSwitch>
+  </div>
 </p-panel>

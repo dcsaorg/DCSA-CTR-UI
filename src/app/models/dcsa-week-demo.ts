@@ -1,5 +1,7 @@
 import {ParsedCTRRecord} from './records';
 
+export type TransferState = "NOT STARTED" | "STARTED" | "ACCEPTED" | "REJECTED" | "DISPUTED";
+
 export interface ConsignmentItem {
 
 }
@@ -167,10 +169,35 @@ export interface PlatformTransfer {
   ctrRecord: ParsedCTRRecord;
 }
 
-export interface PlatformState {
-  platform: string;
-  name: string;
+export class PlatformState {
   receiver?: PlatformState;
-  transferStarted: boolean;
-  incomingTransfers: PlatformTransfer[];
+  transferState: TransferState = "NOT STARTED";
+  incomingTransfers: PlatformTransfer[] = [];
+
+  constructor(readonly platform: string, readonly name: string) {
+  }
+
+  public get isTransferInProgress(): boolean {
+    return this.transferState === "STARTED"
+  }
+
+  public get isTransferAccepted(): boolean {
+    return this.transferState === "ACCEPTED"
+  }
+
+  public get isTransferRejected(): boolean {
+    return this.transferState === "REJECTED"
+  }
+
+  public get isTransferDisputed(): boolean {
+    return this.transferState === "DISPUTED"
+  }
+
+  public get isTransferComplete(): boolean {
+    return this.transferState !== "NOT STARTED" && this.transferState !== "STARTED";
+  }
+
+  public get hasTransferStarted(): boolean {
+    return this.transferState !== "NOT STARTED"
+  }
 }
