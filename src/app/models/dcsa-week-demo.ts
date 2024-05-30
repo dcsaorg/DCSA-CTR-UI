@@ -173,6 +173,7 @@ export class PlatformState {
   receiver?: PlatformState;
   transferState: TransferState = "NOT STARTED";
   incomingTransfers: PlatformTransfer[] = [];
+  ctrAccess: boolean = false;
 
   constructor(readonly platform: string, readonly name: string) {
   }

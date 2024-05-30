@@ -65,6 +65,7 @@ import {ProgressBarModule} from 'primeng/progressbar';
     '.transfer-accepted { background-color: #00811C; border-color: #00811C; }',
     '.transfer-rejected { background-color: #E90000; border-color: #E90000; }',
     '.transfer-disputed { background-color: #E90000; border-color: #E90000; }',
+    '.disabled-card { opacity: 0.3 }',
   ],
   standalone: true,
   imports: [
@@ -176,6 +177,7 @@ export class DcsaWeekDemoPlatformComponent implements OnInit, OnChanges {
     };
     this.platformStateChange.emit(this.platformState);
     const ctrRecord = this.createRecord(platformRecord);
+    receiver.ctrAccess = true;
     this.transferCreated({
       transferID: nextTransferID(),
       fromPlatform: this.platformState,

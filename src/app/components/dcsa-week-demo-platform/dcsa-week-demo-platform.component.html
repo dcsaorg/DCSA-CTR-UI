@@ -1,12 +1,13 @@
 <div class="grid">
   <div class="col-6">
-    <p-card [style]='{ borderRadius: "25px", height: "100%" }'>
+    <p-card [class.disabled-card]="!platformState.ctrAccess" [style]='{ borderRadius: "25px", height: "100%" }'>
       <div class="grid">
         <div class="col-1">&nbsp;</div>
         <div class="col-9 font-bold" style="font-size: 2rem">Send eBL</div>
 
         <div class="col-2 align-content-end justify-content-end">
           <button (click)="eblVisible = true"
+                  [disabled]="!platformState.ctrAccess"
                   label="eBL"
                   iconPos="right"
                   pButton
@@ -31,7 +32,7 @@
                       [filter]="true"
                       [showClear]="true"
                       [required]="true"
-                      [disabled]="platformState.hasTransferStarted"
+                      [disabled]="platformState.hasTransferStarted || !platformState.ctrAccess"
                       [options]="selectableUsers">
             <ng-template pTemplate="item" let-item>
               {{item.name}} ({{item.platform}})
@@ -43,12 +44,12 @@
       </div>
       <br>
       <div *ngIf="!platformState.hasTransferStarted" class="flex justify-content-evenly">
-        <button label="Transfer"
+        <button label="{{platformState.ctrAccess ? 'Transfer' : '(Never had access to the eBL)'}}"
                 pButton
                 appDebounceClick
                 class="p-button-rounded"
                 [style]="{width: '80%'}"
-                [disabled]="!receiverModel.valid"
+                [disabled]="!receiverModel.valid || !platformState.ctrAccess"
                 [loading]="platformState.hasTransferStarted"
                 (debounceClick)="initiateTransfer()"
                 icon="pi pi-send">
@@ -116,7 +117,7 @@
 
   <div class="col-6">
     <ng-template #noTransfer>
-      <p-card [style]='{ borderRadius: "25px", height: "100%", opacity: 0.3 }'>
+      <p-card [class.disabled-card]="true" [style]='{ borderRadius: "25px", height: "100%" }'>
         <div class="grid">
           <div class="col-1">&nbsp;</div>
           <div class="col-9 font-bold" style="font-size: 2rem">No incoming eBL</div>

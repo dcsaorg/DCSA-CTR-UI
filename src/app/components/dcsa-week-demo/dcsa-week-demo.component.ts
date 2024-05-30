@@ -128,6 +128,7 @@ export class DcsaWeekDemoComponent {
       this.platformStateTable.set(platform.platform, platform);
     }
     this.currentPlatform = this.platforms[0];
+    this.currentPlatform.ctrAccess = true;
   }
 
 
