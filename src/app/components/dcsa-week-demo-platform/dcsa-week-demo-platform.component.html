@@ -72,10 +72,13 @@
                     *ngIf="!platformState.isTransferInProgress"
                     icon="pi {{transferIcon}}">
             </button>
-            <p-progressSpinner *ngIf="platformState.isTransferInProgress"
-                               [style]="{ height: '1.7rem', width: '1.7rem' }">
-            </p-progressSpinner>
-
+            <button pButton
+                    class="p-button-rounded p-button-sm"
+                    [disabled]="true"
+                    [style]="{ height: '1.7rem', width: '1.7rem', color: 'white', backgroundColor: transferProgressBarColor, borderColor: transferProgressBarColor }"
+                    *ngIf="platformState.isTransferInProgress"
+                    icon="pi pi-sync pi-spin">
+            </button>
           </div>
 
           <div [ngSwitch]="platformState.transferState" class="col-10">
@@ -101,6 +104,7 @@
           <button label="New transfer"
                   pButton
                   appDebounceClick
+                  class="p-button-rounded"
                   [style]="{width: '80%'}"
                   (debounceClick)="platformState.transferState = 'NOT STARTED'"
                   icon="pi pi-send">
