@@ -3,7 +3,7 @@
     <p-card [class.disabled-card]="!platformState.ctrAccess" [style]='{ borderRadius: "25px", height: "100%" }'>
       <div class="grid">
         <div class="col-1">&nbsp;</div>
-        <div class="col-9 font-bold" style="font-size: 2rem">Send eBL</div>
+        <div class="col-9 font-bold platform-title">Send eBL</div>
 
         <div class="col-2 align-content-end justify-content-end">
           <button (click)="eblVisible = true"
@@ -120,7 +120,7 @@
       <p-card [class.disabled-card]="true" [style]='{ borderRadius: "25px", height: "100%" }'>
         <div class="grid">
           <div class="col-1">&nbsp;</div>
-          <div class="col-9 font-bold" style="font-size: 2rem">No incoming eBL</div>
+          <div class="col-9 font-bold platform-title">No incoming eBL</div>
           <div class="col-2 align-content-end justify-content-end">
             <button (click)="eblVisible = true"
                     label="eBL"
@@ -168,7 +168,7 @@
     <p-card *ngIf="incomingTransfer as transfer; else noTransfer" [style]='{ borderRadius: "25px", height: "100%" }'>
       <div class="grid">
         <div class="col-1">&nbsp;</div>
-        <div class="col-9 font-bold" style="font-size: 2rem">Receiving eBL (<abbr title="{{eblChecksum}}">{{eblChecksum | slice:0:7}}</abbr>) from {{transfer.fromPlatform.platform}}</div>
+        <div class="col-9 font-bold platform-title">Receiving eBL (<abbr title="{{eblChecksum}}">{{eblChecksum | slice:0:7}}</abbr>) from {{transfer.fromPlatform.platform}}</div>
 
         <div class="col-2 align-content-end justify-content-end">
           <button (click)="eblVisible = true"

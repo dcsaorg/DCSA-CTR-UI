@@ -7,6 +7,10 @@
   url(src/assets/poppins-semibold-webfont.woff2) format("woff");
 }
 
+body {
+  margin: 0pt;
+}
+
 :root {
   --surface-a:$foamWhite;
   --surface-b:#efefef;
@@ -3018,12 +3022,10 @@ p-togglebutton.ng-dirty.ng-invalid > .p-togglebutton.p-button {
 }
 
 .p-panel .p-panel-header {
-  border: 1px solid #dee2e6;
-  padding: 1rem 1.25rem;
-  background: #efefef;
-  color: $darkNavyBlue;
-  border-top-right-radius: 4px;
-  border-top-left-radius: 4px;
+  border: none;
+  background: #36345A;
+  color: white;
+  border-radius: 0pt;
 }
 .p-panel .p-panel-header .p-panel-title {
   font-weight: 600;

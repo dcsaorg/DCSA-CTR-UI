@@ -23,6 +23,9 @@ import {Platform} from '../../models/game-model';
 
 
 @Component({
+  styles: [
+    '.dropdown-50p-width { width: 50% !important; min-width: 50% !important; overflow: visible}',
+  ],
   selector: 'app-demo-header',
   templateUrl: './demo-header.component.html',
   styleUrl: './demo-header.component.scss',

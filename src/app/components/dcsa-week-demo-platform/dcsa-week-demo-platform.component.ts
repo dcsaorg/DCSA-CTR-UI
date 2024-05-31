@@ -66,6 +66,7 @@ import {ProgressBarModule} from 'primeng/progressbar';
     '.transfer-rejected { background-color: #E90000; border-color: #E90000; }',
     '.transfer-disputed { background-color: #E90000; border-color: #E90000; }',
     '.disabled-card { opacity: 0.3 }',
+    '.platform-title { font-size: 1.6rem }',
   ],
   standalone: true,
   imports: [

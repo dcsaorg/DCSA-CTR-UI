@@ -2,8 +2,8 @@
   <div class="col-1">
     <img class="header__logo" alt="DCSA Logo" src="assets/DCSA_logo_color_on_dark_background.png">
   </div>
-  <div class="col-9">&nbsp;</div>
-  <div class="col-2 header__menuLabel header__company_container">
+  <div class="col-6">&nbsp;</div>
+  <div class="col-5 header__menuLabel header__company_container">
     <div class="flex justify-content-end gap-2">
       <span class="header__company">Current Platform</span>
       <p-dropdown [(ngModel)]="platform"
@@ -16,6 +16,8 @@
                   [showClear]="false"
                   [required]="true"
                   optionLabel="platform"
+                  class="dropdown-50p-width"
+                  [style]="{minWidth:'100%'}"
                   [options]="platforms">
       </p-dropdown>
     </div>

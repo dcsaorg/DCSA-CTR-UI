@@ -56,7 +56,23 @@
           </td>
         </ng-container>
         <ng-container *ngSwitchDefault>
-          <td>{{col.value(row)}}</td>
+          <ng-container [ngSwitch]="col.title"]>
+            <ng-container *ngSwitchCase="'Action'">
+              <ng-container [ngSwitch]="col.value(row)">
+                <td *ngSwitchCase="'INTEND TO TRANSFER'" [style]="{backgroundColor:'rgba(242, 189, 0, 0.4)'}">{{col.value(row)}}</td>
+                <td *ngSwitchCase="'CANCEL TRANSFER'" [style]="{backgroundColor:'rgba(255, 0, 0, 0.4)'}">{{col.value(row)}}</td>
+                <td *ngSwitchCase="'TRANSFER ACCEPTED'" [style]="{backgroundColor:'rgba(0, 129, 28, 0.3)'}">{{col.value(row)}}</td>
+                <td *ngSwitchCase="'RETRACT RECORD'" [style]="{backgroundColor:'rgba(255, 0, 0, 0.4)'}">{{col.value(row)}}</td>
+                <td *ngSwitchCase="'DISPUTE RECORD'" [style]="{backgroundColor:'rgba(255, 0, 0, 0.4)'}">{{col.value(row)}}</td>
+                <td *ngSwitchCase="'DISPUTE RECORD RESOLVED'" [style]="{backgroundColor:'rgba(242, 189, 0, 0.4)'}">{{col.value(row)}}</td>
+                <td *ngSwitchCase="'SURRENDERED'" [style]="{backgroundColor:'rgba(0, 129, 28, 0.3)'}">{{col.value(row)}}</td>
+                <td *ngSwitchDefault [style]="{backgroundColor:'rgba(242, 189, 0, 0.4)'}">{{col.value(row)}}</td>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <td>{{col.value(row)}}</td>
+            </ng-container>
+          </ng-container>
         </ng-container>
       </ng-container>
     </tr>
